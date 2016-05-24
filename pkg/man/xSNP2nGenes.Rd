@@ -4,15 +4,18 @@
 \alias{xSNP2nGenes}
 \title{Function to define nearby genes given a list of SNPs}
 \usage{
-xSNP2nGenes(data, distance.max = 2e+05, decay.kernel = c("slow",
-"linear",
-"rapid"), decay.exponent = 2, GR.SNP = "dbSNP_GWAS",
+xSNP2nGenes(data, distance.max = 2e+05, decay.kernel = c("rapid",
+"slow",
+"linear"), decay.exponent = 2, GR.SNP = "dbSNP_GWAS",
 GR.Gene = "UCSC_genes", verbose = T,
 RData.location =
 "https://github.com/hfang-bristol/RDataCentre/blob/master/Portal")
 }
 \arguments{
-\item{data}{a input vector containing SNPs}
+\item{data}{a input vector containing SNPs. SNPs should be provided as
+dbSNP ID (ie starting with rs). Alternatively, they can be in the
+format of 'chrN:xxx', where N is either 1-22 or X, xxx is number; for
+example, 'chr16:28525386'}
 
 \item{distance.max}{the maximum distance between genes and SNPs. Only
 those genes no far way from this distance will be considered as seed
@@ -73,16 +76,18 @@ For details on the decay kernels, please refer to
 \examples{
 \dontrun{
 # Load the library
-library(Pi)
-library(GenomicRanges)
+library(XGR)
+RData.location="~/Sites/SVN/github/RDataCentre/Portal"
 
-# a) provide the SNPs with the significance info
+# a) provide the seed SNPs with the significance info
+## load ImmunoBase
+ImmunoBase <- xRDataLoader(RData.customised='ImmunoBase')
 ## get lead SNPs reported in AS GWAS and their significance info (p-values)
-AS <- read.delim(file.path(path.package("Pi"),"AS.txt"),
-stringsAsFactors=FALSE)
+gr <- ImmunoBase$AS$variant
+data <- names(gr)
 
 # b) define nearby genes
-df_nGenes <- xSNP2nGenes(data=AS$SNP, distance.max=200000,
+df_nGenes <- xSNP2nGenes(data=data, distance.max=200000,
 decay.kernel="slow", decay.exponent=2, RData.location=RData.location)
 }
 }

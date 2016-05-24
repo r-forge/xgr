@@ -2,7 +2,7 @@
 #'
 #' \code{xSubneterSNPs} is supposed to identify maximum-scoring gene subnetwork from an input graph with the node information on the significance (measured as p-values or fdr). To do so, it defines seed genes and their scores that take into account the distance to and the significance of input SNPs. It returns an object of class "igraph". 
 #'
-#' @param data a named input vector containing the sinificance level for nodes (dbSNP). For this named vector, the element names are dbSNP, the element values for the significance level (measured as p-value or fdr). Alternatively, it can be a matrix or data frame with two columns: 1st column for dbSNP, 2nd column for the significance level
+#' @param data a named input vector containing the sinificance level for nodes (dbSNP). For this named vector, the element names are dbSNP ID (or in the format such as 'chr16:28525386'), the element values for the significance level (measured as p-value or fdr). Alternatively, it can be a matrix or data frame with two columns: 1st column for dbSNP, 2nd column for the significance level
 #' @param include.LD additional SNPs in LD with Lead SNPs are also included. By default, it is 'NA' to disable this option. Otherwise, LD SNPs will be included based on one or more of 26 populations and 5 super populations from 1000 Genomics Project data (phase 3). The population can be one of 5 super populations ("AFR", "AMR", "EAS", "EUR", "SAS"), or one of 26 populations ("ACB", "ASW", "BEB", "CDX", "CEU", "CHB", "CHS", "CLM", "ESN", "FIN", "GBR", "GIH", "GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL", "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "YRI"). Explanations for population code can be found at \url{http://www.1000genomes.org/faq/which-populations-are-part-your-study}
 #' @param LD.customised a user-input matrix or data frame with 3 columns: 1st column for Lead SNPs, 2nd column for LD SNPs, and 3rd for LD r2 value. It is designed to allow the user analysing their precalcuated LD info. This customisation (if provided) has the high priority over built-in LD SNPs
 #' @param LD.r2 the LD r2 value. By default, it is 0.8, meaning that SNPs in LD (r2>=0.8) with input SNPs will be considered as LD SNPs. It can be any value from 0.8 to 1
@@ -30,22 +30,20 @@
 #' \dontrun{
 #' # Load the library
 #' library(XGR)
-#' library(igraph)
-#' library(dnet)
-#' library(GenomicRanges)
+#' RData.location="~/Sites/SVN/github/RDataCentre/Portal"
 #'
 #' # a) provide the seed SNPs with the weight info
 #' ## load ImmunoBase
 #' ImmunoBase <- xRDataLoader(RData.customised='ImmunoBase')
 #' ## get lead SNPs reported in AS GWAS and their significance info (p-values)
 #' gr <- ImmunoBase$AS$variant
-#' seeds.snps <- as.matrix(mcols(gr)[,c(1,3)])
+#' data <- GenomicRanges::mcols(gr)[,c(1,3)]
 #' 
 #' # b) perform network analysis
 #' # b1) find maximum-scoring subnet based on the given significance threshold
-#' subnet <- xSubneterSNPs(data=seeds.snps, network="STRING_high", seed.genes=F, subnet.significance=0.01)
+#' subnet <- xSubneterSNPs(data=data, network="STRING_high", seed.genes=F, subnet.significance=0.01, RData.location=RData.location)
 #' # b2) find maximum-scoring subnet with the desired node number=30
-#' subnet <- xSubneterSNPs(data=seeds.snps, network="STRING_high", seed.genes=F, subnet.size=30)
+#' subnet <- xSubneterSNPs(data=data, network="STRING_high", seed.genes=F, subnet.size=30)
 #'
 #' # c) save subnet results to the files called 'subnet_edges.txt' and 'subnet_nodes.txt'
 #' output <- igraph::get.data.frame(subnet, what="edges")
@@ -61,7 +59,7 @@
 #' 
 #' # e) visualise the identified subnet as a circos plot
 #' library(RCircos)
-#' xCircos(g=subnet, entity="Gene")
+#' xCircos(g=subnet, entity="Gene", RData.location=RData.location)
 #' }
 
 xSubneterSNPs <- function(data, include.LD=NA, LD.customised=NULL, LD.r2=0.8, significance.threshold=5e-5, distance.max=200000, decay.kernel=c("slow","linear","rapid"), decay.exponent=2, GR.SNP="dbSNP_GWAS", GR.Gene="UCSC_genes", scoring.scheme=c("max","sum","sequential"), network=c("STRING_highest","STRING_high","STRING_medium","PCommonsUN_high","PCommonsUN_medium","PCommonsDN_high","PCommonsDN_medium","PCommonsDN_Reactome","PCommonsDN_KEGG","PCommonsDN_HumanCyc","PCommonsDN_PID","PCommonsDN_PANTHER","PCommonsDN_ReconX","PCommonsDN_TRANSFAC","PCommonsDN_PhosphoSite","PCommonsDN_CTD"), network.customised=NULL, seed.genes=T, subnet.significance=5e-5, subnet.size=NULL, verbose=T, RData.location="https://github.com/hfang-bristol/RDataCentre/blob/master/Portal")

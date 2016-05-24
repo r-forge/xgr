@@ -1,10 +1,13 @@
 #' Function to visualise a network as a circos plot
 #'
-#' \code{xCircos} is used to visualise a network as a circos plot. The network must be a 'igraph' object. 
+#' \code{xCircos} is used to visualise a network as a circos plot. The network must be a 'igraph' object.
 #'
 #' @param g an object of class "igraph". For example, it stores semantic similarity results with nodes for genes/SNPs and edges for pair-wise semantic similarity between them 
 #' @param entity the entity of similarity analysis for which results are being plotted. It can be either "SNP" or "Gene"
 #' @param top_num the top number of similarity edges to be plotted
+#' @param colormap short name for the colormap. It can be one of "jet" (jet colormap), "bwr" (blue-white-red colormap), "gbr" (green-black-red colormap), "wyr" (white-yellow-red colormap), "br" (black-red colormap), "yr" (yellow-red colormap), "wb" (white-black colormap), and "rainbow" (rainbow colormap, that is, red-yellow-green-cyan-blue-magenta). Alternatively, any hyphen-separated HTML color names, e.g. "lightyellow-orange" (by default), "blue-black-yellow", "royalblue-white-sandybrown", "darkgreen-white-darkviolet". A list of standard color names can be found in \url{http://html-color-codes.info/color-names}
+#' @param rescale logical to indicate whether the edge values are rescaled to the range [0,1]. By default, it sets to true
+#' @param nodes.query nodes in query for which edges attached to them will be displayed. By default, it sets to NULL meaning no such restriction
 #' @param ideogram logical to indicate whether chromosome banding is plotted
 #' @param chr.exclude a character vector of chromosomes to exclude from the plot, e.g. c("chrX", "chrY"). By defautl, it is 'auto' meaning those chromosomes without data will be excluded. If NULL, no chromosome is excluded
 #' @param entity.label.cex the font size of genes/SNPs labels. Default is 0.8
@@ -23,9 +26,8 @@
 #' \dontrun{
 #' # Load the library
 #' library(XGR)
-#' library(igraph)
 #' library(RCircos)
-#' library(GenomicRanges)
+#' RData.location="~/Sites/SVN/github/RDataCentre/Portal"
 #' 
 #' # provide genes and SNPs reported in AS GWAS studies
 #' ImmunoBase <- xRDataLoader(RData.customised='ImmunoBase')
@@ -33,38 +35,83 @@
 #' # 1) SNP-based similarity analysis using GWAS Catalog traits (mapped to EF)
 #' ## Get lead SNPs reported in AS GWAS
 #' example.snps <- names(ImmunoBase$AS$variants)
-#' SNP.g <- xSocialiserSNPs(example.snps, include.LD=NA)
+#' SNP.g <- xSocialiserSNPs(example.snps, include.LD=NA, RData.location=RData.location)
 #' # Circos plot of the EF-based SNP similarity network
 #' #out.file <- "SNP_Circos.pdf"
 #' #pdf(file=out.file, height=12, width=12, compress=TRUE)
-#' xCircos(g=SNP.g, entity="SNP")
+#' xCircos(g=SNP.g, entity="SNP", RData.location=RData.location)
 #' #dev.off()
+#' # Circos plot involving nodes 'rs6871626'
+#' xCircos(g=SNP.g, entity="SNP", nodes.query="rs6871626", RData.location=RData.location)
 #'
 #' # 2) Gene-based similarity analysis using Disease Ontology (DO)
 #' ## Get genes within 10kb away from AS GWAS lead SNPs
 #' example.genes <- names(which(ImmunoBase$AS$genes_variants<=10000))
-#' gene.g <- xSocialiserGenes(example.genes, ontology=c("DO")
+#' gene.g <- xSocialiserGenes(example.genes, ontology="DO", RData.location=RData.location)
 #' # Circos plot of the DO-based gene similarity network
 #' #out.file <- "Gene_Circos.pdf"
 #' #pdf(file=out.file, height=12, width=12, compress=TRUE)
-#' xCircos(g=gene.g, entity="Gene", chr.exclude="chrY")
+#' xCircos(g=gene.g, entity="Gene", chr.exclude="chrY", RData.location=RData.location)
 #' #dev.off()
 #' } 
 
-xCircos <- function(g, entity=c("SNP","Gene"), top_num=50, ideogram=T, chr.exclude="auto", entity.label.cex=0.8, GR.SNP="dbSNP_GWAS", GR.Gene="UCSC_genes", verbose=T, RData.location="https://github.com/hfang-bristol/RDataCentre/blob/master/Portal")
+xCircos <- function(g, entity=c("SNP","Gene"), top_num=50, colormap=c("yr","bwr","jet","gbr","wyr","br","rainbow","wb","lightyellow-orange"), rescale=T, nodes.query=NULL, ideogram=T, chr.exclude="auto", entity.label.cex=0.7, GR.SNP="dbSNP_GWAS", GR.Gene="UCSC_genes", verbose=T, RData.location="https://github.com/hfang-bristol/RDataCentre/blob/master/Portal")
 {
-  
+
     ## match.arg matches arg against a table of candidate values as specified by choices, where NULL means to take the first one
 	entity <- match.arg(entity)
+	
+	flag_package <- F
+    pkgs <- c("RCircos")
+    if(all(pkgs %in% rownames(utils::installed.packages()))){
+        tmp <- sapply(pkgs, function(pkg) {
+            #suppressPackageStartupMessages(require(pkg, character.only=T))
+            requireNamespace(pkg, quietly=T)
+        })
+        if(all(tmp)){
+        	flag_package <- T
+        }
+    }
+	if(!flag_package){
+		stop("The package 'RCircos' is not available.\n")
+	}
 	
   	## Check input g
   	if (class(g) != "igraph") {
     	stop("The function must apply to a 'igraph' object.\n")
   	}
-  
+
 	## Convert from igraph into data.frame
   	df <- igraph::get.data.frame(g, what="edges")
-
+	
+	## check the weight and sort the weight
+	if(is.null(df$weight)){
+		df$weight <- rep(1, nrow(df))
+		## force NOT to rescale weight
+		rescale <- F
+	}else{
+		df$weight <- as.numeric(df$weight)
+	}
+	df <- df[with(df,order(-weight)), ]
+	
+	## restrict to nodes in query
+	if(!is.null(nodes.query)){
+		ind_from <- which(!is.na(match(df[,1], nodes.query)))
+		ind_to <- which(!is.na(match(df[,2], nodes.query)))
+		ind <- union(ind_from, ind_to)
+		if(length(ind)>0){
+			df <- df[ind,]
+			
+			if(verbose){
+				ind <- match(nodes.query, union(df[,1], df[,2]))
+				nodes.query <- nodes.query[!is.na(ind)]
+				now <- Sys.time()
+				message(sprintf("Circos plot restricted to nodes '%s' (%s) ...", paste(nodes.query,collapse=','), as.character(now)), appendLF=T)
+			}
+		}
+	}
+	
+	## keep the top edges
   	if(is.null(top_num)){
     	top_num <- nrow(df)
   	}
@@ -171,7 +218,7 @@ xCircos <- function(g, entity=c("SNP","Gene"), top_num=50, ideogram=T, chr.exclu
   	
   	params$text.size <- entity.label.cex
   	RCircos.Reset.Plot.Parameters(params)
-  
+
   	## Initialise graphic device, plot chromosome ideogram
 	if(verbose){
 		now <- Sys.time()
@@ -179,13 +226,26 @@ xCircos <- function(g, entity=c("SNP","Gene"), top_num=50, ideogram=T, chr.exclu
 	}
   	RCircos.Set.Plot.Area()
   	RCircos.Chromosome.Ideogram.Plot()
-  
+
   	## Plot link data coloured according to the similarity output
 	if(verbose){
 		now <- Sys.time()
 		message(sprintf("Plotting link data (%s) ...", as.character(now)), appendLF=T)
 	}
-  	input.data$PlotColor <- colorRampPalette(c("gray", "red"))(10)[as.numeric(cut(input.data$similarity, breaks=seq(0, 1, 0.1)))]
+	
+	## Also rescale similarity into the [0,1] range
+	if(rescale){
+		sim <- input.data$similarity
+		if(verbose){
+			now <- Sys.time()
+			message(sprintf("Also rescale similarity into the [0,1] range (%s)", as.character(now)), appendLF=T)
+		}
+		# rescale to [0 1]
+		input.data$similarity <- (sim - min(sim))/(max(sim) - min(sim))
+	}
+	
+	palette.name <- supraHex::visColormap(colormap=colormap)
+  	input.data$PlotColor <- palette.name(20)[as.numeric(cut(input.data$similarity, breaks=seq(0, 1, 0.05)))]
   	input.data <- input.data[order(input.data$similarity, decreasing=F), ]
   	RCircos.Link.Plot(input.data, track.num=1, FALSE)
 

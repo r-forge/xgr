@@ -105,7 +105,8 @@ displayed in the screen. By default, it sets to true for display}
 }
 \value{
 It returns an object of class "igraph", with nodes for input genes/SNPs
-and edges for pair-wise semantic similarity between them. If no
+and edges for pair-wise semantic similarity between them. Also added
+graph attribute is 'dag' storing the annotated ontology DAG used. If no
 similarity is calculuated, it returns NULL.
 }
 \description{
@@ -127,7 +128,6 @@ subgraph.
 \dontrun{
 # Load the library
 library(XGR)
-library(igraph)
 
 # 1) SNP-based enrichment analysis using GWAS Catalog traits (mapped to EF)
 # 1a) ig.EF (an object of class "igraph" storing as a directed graph)

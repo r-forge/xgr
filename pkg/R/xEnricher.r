@@ -22,9 +22,11 @@
 #' \itemize{
 #'  \item{\code{term_info}: a matrix of nTerm X 4 containing snp/gene set information, where nTerm is the number of terms, and the 4 columns are "id" (i.e. "Term ID"), "name" (i.e. "Term Name"), "namespace" and "distance"}
 #'  \item{\code{annotation}: a list of terms containing annotations, each term storing its annotations. Always, terms are identified by "id"}
+#'  \item{\code{g}: an igraph object to represent DAG}
 #'  \item{\code{data}: a vector containing input data in consideration. It is not always the same as the input data as only those mappable are retained}
 #'  \item{\code{background}: a vector containing the background data. It is not always the same as the input data as only those mappable are retained}
 #'  \item{\code{overlap}: a list of overlapped snp/gene sets, each storing snps/genes overlapped between a snp/gene set and the given input data (i.e. the snps/genes of interest). Always, gene sets are identified by "id"}
+#'  \item{\code{fc}: a vector containing fold changes}
 #'  \item{\code{zscore}: a vector containing z-scores}
 #'  \item{\code{pvalue}: a vector containing p-values}
 #'  \item{\code{adjp}: a vector containing adjusted p-values. It is the p value but after being adjusted for multiple comparisons}
@@ -33,8 +35,8 @@
 #' @note The interpretation of the algorithms used to account for the hierarchy of the ontology is:
 #' \itemize{
 #' \item{"none": does not consider the ontology hierarchy at all.}
-#' \item{"lea": computers the significance of a term in terms of the significance of its children at the maximum depth (e.g. 2). Precisely, once snps/genes are already annotated to any children terms with a more signficance than itself, then all these snps/genes are eliminated from the use for the recalculation of the signifance at that term. The final p-values takes the maximum of the original p-value and the recalculated p-value.}
-#' \item{"elim": computers the significance of a term in terms of the significance of its all children. Precisely, once snps/genes are already annotated to a signficantly enriched term under the cutoff of e.g. pvalue<1e-2, all these snps/genes are eliminated from the ancestors of that term).}
+#' \item{"lea": estimates the significance of a term in terms of the significance of its children at the maximum depth (e.g. 2). Precisely, once snps/genes are already annotated to any children terms with a more signficance than itself, then all these snps/genes are eliminated from the use for the recalculation of the signifance at that term. The final p-values takes the maximum of the original p-value and the recalculated p-value.}
+#' \item{"elim": estimates the significance of a term in terms of the significance of its all children. Precisely, once snps/genes are already annotated to a signficantly enriched term under the cutoff of e.g. pvalue<1e-2, all these snps/genes are eliminated from the ancestors of that term).}
 #' \item{"pc": requires the significance of a term not only using the whole snps/genes as background but also using snps/genes annotated to all its direct parents/ancestors as background. The final p-value takes the maximum of both p-values in these two calculations.}
 #' \item{"Notes": the order of the number of significant terms is: "none" > "lea" > "elim" > "pc".}
 #' }
@@ -69,17 +71,15 @@
 #' output <- data.frame(term=rownames(res), res)
 #' utils::write.table(output, file="EF_enrichments.txt", sep="\t", row.names=FALSE)
 #'
-#' # 1g) visualise the top 10 significant terms in the ontology hierarchy
-#' g <- xRDataLoader(RData='ig.EF')
-#' g
-#' nodes_query <- names(sort(eTerm$adjp)[1:10])
-#' nodes.highlight <- rep("red", length(nodes_query))
-#' names(nodes.highlight) <- nodes_query
-#' subg <- dnet::dDAGinduce(g, nodes_query)
+#' # 1g) barplot of significant enrichment results
+#' bp <- xEnrichBarplot(eTerm, top_num="auto", displayBy="adjp")
+#' print(bp)
+#'
+#' # 1h) visualise the top 10 significant terms in the ontology hierarchy
 #' # color-code terms according to the adjust p-values (taking the form of 10-based negative logarithm)
-#' dnet::visDAG(g=subg, data=-1*log10(eTerm$adjp[V(subg)$name]), node.info="both", zlim=c(0,2), node.attrs=list(color=nodes.highlight))
+#' xEnrichDAGplot(eTerm, top_num=10, displayBy="adjp", node.info=c("full_term_name"))
 #' # color-code terms according to the z-scores
-#' dnet::visDAG(g=subg, data=eTerm$zscore[V(subg)$name], node.info="both", colormap="darkblue-white-darkorange", node.attrs=list(color=nodes.highlight))
+#' xEnrichDAGplot(eTerm, top_num=10, displayBy="zscore", node.info=c("full_term_name"))
 #' }
 
 xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000), min.overlap=3, which.distance=NULL, test=c("hypergeo","fisher","binomial"), p.adjust.method=c("BH", "BY", "bonferroni", "holm", "hochberg", "hommel"), ontology.algorithm=c("none","pc","elim","lea"), elim.pvalue=1e-2, lea.depth=2, path.mode=c("all_paths","shortest_paths","all_shortest_paths"), true.path.rule=TRUE, verbose=T)
@@ -303,6 +303,24 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
         
         return(z)
     }
+    
+    ## fold change calcualted from hypergeometric distribution
+    fcHyper <- function(genes.group, genes.term, genes.universe){
+        genes.hit <- intersect(genes.group, genes.term)
+        # num of success in sampling
+        X <- length(genes.hit)
+        # num of sampling
+        K <- length(genes.group)
+        # num of success in background
+        M <- length(genes.term)
+        # num in background
+        N <- length(genes.universe)
+        
+        x.exp <- K*M/N
+        fc <- X/x.exp
+
+        return(fc)
+    }
     ##############################################################################################
 
     if(verbose){
@@ -354,7 +372,12 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
             genes.term <- unique(unlist(gs[term]))
             zscoreHyper(genes.group, genes.term, genes.universe)
         })
-
+        
+        fcs <- sapply(terms, function(term){
+            genes.term <- unique(unlist(gs[term]))
+            fcHyper(genes.group, genes.term, genes.universe)
+        })
+        
     }else if(ontology.algorithm=="pc" || ontology.algorithm=="elim" || ontology.algorithm=="lea"){
 
         if(verbose){
@@ -380,7 +403,9 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
         ## node2pval.Hash: key (node), value (pvalue)
         node2pval.Hash <- new.env(hash=T, parent=emptyenv())        
         ## node2zscore.Hash: key (node), value (zscore)
-        node2zscore.Hash <- new.env(hash=T, parent=emptyenv())    
+        node2zscore.Hash <- new.env(hash=T, parent=emptyenv())   
+        ## node2fc.Hash: key (node), value (fc)
+        node2fc.Hash <- new.env(hash=T, parent=emptyenv())    
         
         if(ontology.algorithm=="pc"){
         
@@ -397,6 +422,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                         binomial = doBinomialTest(genes.group, genes.term, genes.universe)
                     )
                     zscore_whole <- zscoreHyper(genes.group, genes.term, genes.universe)
+                    fc_whole <- fcHyper(genes.group, genes.term, genes.universe)
             
                     ## get the incoming neighbors/parents (including self) that are reachable
                     neighs.in <- igraph::neighborhood(subg, order=1, nodes=currNode, mode="in")
@@ -416,6 +442,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                         binomial = doBinomialTest(genes.group.parent, genes.term.parent, genes.parent)
                     )
                     zscore_relative <- zscoreHyper(genes.group.parent, genes.term.parent, genes.parent)
+                    fc_relative <- fcHyper(genes.group.parent, genes.term.parent, genes.parent)
                 
                     ## take the maximum value of pvalue_whole and pvalue_relative
                     pvalue <- max(pvalue_whole, pvalue_relative)
@@ -426,6 +453,11 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                     zscore <- ifelse(pvalue_whole>pvalue_relative, zscore_whole, zscore_relative)
                     ## store the result (the z-score)
                     assign(currNode, zscore, envir=node2zscore.Hash)
+                    
+                    ## take the miminum value of fc_whole and fc_relative
+                    fc <- ifelse(pvalue_whole>pvalue_relative, fc_whole, fc_relative)
+                    ## store the result (the fc)
+                    assign(currNode, fc, envir=node2fc.Hash)
                 }
                 
                 if(verbose){
@@ -474,11 +506,14 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                         binomial = doBinomialTest(genes.group, genes.term, genes.universe)
                     )
                     zscore <- zscoreHyper(genes.group, genes.term, genes.universe)
+                    fc <- fcHyper(genes.group, genes.term, genes.universe)
                     
                     ## store the result (the p-value)
                     assign(currNode, pvalue, envir=node2pval.Hash)
                     ## store the result (the z-score)
                     assign(currNode, zscore, envir=node2zscore.Hash)
+                    ## store the result (the fc)
+                    assign(currNode, fc, envir=node2fc.Hash)
                     
                     ## condition to update "ancNode2gene.Hash"
                     if(pvalue < pval.cutoff) {
@@ -548,6 +583,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                         binomial = doBinomialTest(genes.group, genes.term, genes.universe)
                     )
                     zscore.old <- zscoreHyper(genes.group, genes.term, genes.universe)
+                    fc.old <- fcHyper(genes.group, genes.term, genes.universe)
                     
                     ## store the result (old pvalue)
                     assign(currNode, pvalue.old, envir=node2pvalo.Hash)
@@ -590,6 +626,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                                 binomial = doBinomialTest(genes.group, genes.term.new, genes.universe)
                             )
                             zscore.new <- zscoreHyper(genes.group, genes.term.new, genes.universe)
+                            fc.new <- fcHyper(genes.group, genes.term.new, genes.universe)
                             
                             ## take the maximum value of pvalue_new and the original pvalue
                             pvalue <- max(pvalue.new, pvalue.old)
@@ -597,14 +634,19 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                             ## take the minimum value of zscore_new and the original zscore
                             zscore <- ifelse(pvalue.new>pvalue.old, zscore.new, zscore.old)
                             
+                            ## take the minimum value of fc_new and the original zscore
+                            fc <- ifelse(pvalue.new>pvalue.old, fc.new, fc.old)
+                            
                         }else{
                             pvalue <- pvalue.old
                             zscore <- zscore.old
+                            fc <- fc.old
                         }
                         
                     }else{
                         pvalue <- pvalue.old
                         zscore <- zscore.old
+                        fc <- fc.old
                     }
                     
                     ## store the result (recalculated pvalue if have to)
@@ -612,6 +654,9 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
                     
                     ## store the result (recalculated zscore if have to)
                     assign(currNode, zscore, envir=node2zscore.Hash)
+                    
+                    ## store the result (recalculated zscore if have to)
+                    assign(currNode, fc, envir=node2fc.Hash)
                 }
     
                 if(verbose){
@@ -623,6 +668,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
         
         pvals <- unlist(as.list(node2pval.Hash))
         zscores <- unlist(as.list(node2zscore.Hash))
+        fcs <- unlist(as.list(node2fc.Hash))
     
     }
 	
@@ -654,6 +700,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
     gs <- gs[ind_gs[!is.na(ind_gs)]]
     overlaps <- overlaps[ind_gs[!is.na(ind_gs)]]
     zscores <- zscores[ind_zscores[!is.na(ind_zscores)]]
+    fcs <- fcs[ind_zscores[!is.na(ind_zscores)]]
     pvals <- pvals[ind_zscores[!is.na(ind_zscores)]]
     
     ## remove those with zscores=NA
@@ -661,6 +708,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
     gs <- gs[flag]
     overlaps <- overlaps[flag]
     zscores <- zscores[flag]
+    fcs <- fcs[flag]
     pvals <- pvals[flag]
     
     if(length(pvals)==0){
@@ -673,6 +721,7 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
     set_info <- set_info[!is.na(ind),]
     
     zscores <- signif(zscores, digits=3)
+    fcs <- signif(fcs, digits=3)
     pvals <- sapply(pvals, function(x) min(x,1))
     
     if(verbose){
@@ -716,9 +765,11 @@ xEnricher <- function(data, annotation, g, background=NULL, size.range=c(10,2000
     
     eTerm <- list(term_info	 = set_info,
                   annotation = gs,
+                  g 	   = subg,
                   data     = genes.group,
                   background=genes.universe,
                   overlap  = overlaps,
+                  fc	   = fcs,
                   zscore   = zscores,
                   pvalue   = pvals,
                   adjp     = adjpvals,

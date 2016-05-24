@@ -84,6 +84,7 @@ information, where nTerm is the number of terms, and the 4 columns are
 "distance"}
 \item{\code{annotation}: a list of terms containing annotations, each
 term storing its annotations. Always, terms are identified by "id"}
+\item{\code{g}: an igraph object to represent DAG}
 \item{\code{data}: a vector containing input data in consideration. It
 is not always the same as the input data as only those mappable are
 retained}
@@ -93,6 +94,7 @@ retained}
 \item{\code{overlap}: a list of overlapped snp/gene sets, each storing
 snps overlapped between a snp/gene set and the given input data (i.e.
 the snps of interest). Always, gene sets are identified by "id"}
+\item{\code{fc}: a vector containing fold changes}
 \item{\code{zscore}: a vector containing z-scores}
 \item{\code{pvalue}: a vector containing p-values}
 \item{\code{adjp}: a vector containing adjusted p-values. It is the p
@@ -116,7 +118,7 @@ library(XGR)
 library(igraph)
 
 # Enrichment analysis using your own data
-# a) provide your own data (eg ImmunoBase SNPs and associations/annotations with disease traits)
+# a) provide your own data (eg InterPro domains and their annotations by GO terms)
 ## All InterPro domains
 input.file <-
 "http://dcgor.r-forge.r-project.org/data/InterPro/InterPro.txt"
@@ -140,6 +142,10 @@ output <- xEnrichViewer(eTerm, top_num=length(eTerm$adjp),
 sortBy="adjp", details=TRUE)
 utils::write.table(output, file="Yours_enrichments.txt", sep="\\t",
 row.names=FALSE)
+
+# e) barplot of significant enrichment results
+bp <- xEnrichBarplot(eTerm, top_num="auto", displayBy="adjp")
+print(bp)
 }
 
 # Using ImmunoBase SNPs and associations/annotations with disease traits
@@ -161,6 +167,9 @@ eTerm <- xEnricherYours(data.file=data.file,
 annotation.file=annotation.file)
 # view enrichment results for the top significant terms
 xEnrichViewer(eTerm)
+# barplot of significant enrichment results
+bp <- xEnrichBarplot(eTerm, top_num="auto", displayBy="adjp")
+print(bp)
 }
 \seealso{
 \code{\link{xEnricher}}
