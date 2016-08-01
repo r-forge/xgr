@@ -228,14 +228,15 @@ div.tocify {
 <h1 class="title">XGR: eXploring Genomic Relations at the gene, SNP and genomic region level through enrichment, similarity, network and annotation analysis</h1>
 <h4 class="author"><em><p><a href="http://www.well.ox.ac.uk/dr-hai-fang"><code>Hai Fang</code></a>, <a href="http://www.well.ox.ac.uk/bogdan-knezevic"><code>Bogdan Knezevic</code></a>, <a href="http://www.well.ox.ac.uk/katie-burnham"><code>Katie L Burnham</code></a>, <a href="http://www.well.ox.ac.uk/julian-knight"><code>Julian C Knight</code></a></p>
 <p>Wellcome Trust Centre for Human Genetics, University of Oxford, UK</p></em></h4>
-<h4 class="date"><em>Fri Jun 24 12:48:15 2016</em></h4>
+<h4 class="date"><em>Mon Aug 1 15:23:29 2016</em></h4>
 
 </div>
 
 
 <div id="summary" class="section level1">
 <h1><span class="header-section-number">1</span> Summary</h1>
-<p>We introduce an R package called <em>XGR</em>, publicly available at <a href="http://cran.r-project.org/package=XGR" class="uri">http://cran.r-project.org/package=XGR</a>. This package is designed to make a user-defined gene or SNP list more interpretable by comprehensively utilising ontology and network information to reveal relationships and enhance opportunities for biological discovery. XGR is unique in supporting a broad range of ontologies (including knowledge of biological and molecular functions, pathways, diseases and phenotypes - in both human and mouse) and different types of networks (including functional, physical and pathway interactions).</p>
+<p>We introduce <em>XGR</em> (e<em>X</em>ploring <em>G</em>enomic <em>R</em>elations), released as an R package (<a href="http://cran.r-project.org/package=XGR" class="uri">http://cran.r-project.org/package=XGR</a>) and web-app (<a href="http://galahad.well.ox.ac.uk/XGR" class="uri">http://galahad.well.ox.ac.uk/XGR</a>) enabling downstream knowledge discovery from genomic summary data. Biological interpretation of genomic summary data resulting from GWAS and eQTL mapping is a major bottleneck in human disease genomics, calling for efficient and integrative tools designed to resolve this problem. In the past, this kind of research has been less appreciated but is becoming increasingly important with the growing availability of ontology, annotation, and network data essential for precision interpretation.</p>
+<p>XGR is designed to make a user-defined gene or SNP list more interpretable by comprehensively utilising ontology and network information to generate more informative results than conventional methods. XGR is unique in supporting a broad range of ontologies (including knowledge of biological and molecular functions, pathways, diseases and phenotypes - in both human and mouse) and different types of networks (including functional, physical and pathway interactions).</p>
 <p>In this user manual, you will be guided through the steps necessary to use this tool. After going through particularly the <code>Showcases</code> section which includes several demos with published data, you will be able to: 1) perform enrichment analysis using either built-in or custom ontologies, 2) calculate semantic similarity between genes (or between SNPs) based on their ontology annotation profiles, 3) identify a gene subnetwork given your query list of (significant) genes or SNPs, and 4) interpret genomic regions using co-localised functional genomic annotations and using nearby gene annotations by ontologies. For end-users who are unfamiliar with R, please refer to our user-friendly web app.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
 </div>
 <div id="web-app-linkto" class="section level1">
@@ -289,115 +290,626 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <span class="kw">install_github</span>(<span class="kw">c</span>(<span class="st">&quot;hfang-bristol/XGR&quot;</span>), <span class="dt">dependencies=</span>T)</code></pre></div>
 </div>
 </div>
+<div id="source-data" class="section level1">
+<h1><span class="header-section-number">4</span> Source data</h1>
+<p>All source data are represented uniformly as well-documented RData-formatted files, taking advantage of the R software environment and its packages such as igraph <span class="citation">(Csardi and Nepusz 2006)</span>. These data are subject to regular updates, and are also regularly supplemented to keep pace with the explosive nature of big data in modern genome biology.</p>
+<div id="ontologies-and-annotations-at-the-gene-level" class="section level2">
+<h2><span class="header-section-number">4.1</span> Ontologies and annotations at the gene level</h2>
+<table>
+<caption>Ontologies and their identifier codes used in XGR are summarised below</caption>
+<thead>
+<tr class="header">
+<th align="left">Category</th>
+<th align="left">Ontology</th>
+<th align="left">Identifier Codes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Disease</td>
+<td align="left">Disease Ontology</td>
+<td align="left">DO</td>
+</tr>
+<tr class="even">
+<td align="left">Function</td>
+<td align="left">Gene Ontology Molecular Function</td>
+<td align="left">GOMF</td>
+</tr>
+<tr class="odd">
+<td align="left">Function</td>
+<td align="left">Gene Ontology Biological Process</td>
+<td align="left">GOBP</td>
+</tr>
+<tr class="even">
+<td align="left">Function</td>
+<td align="left">Gene Ontology Cellular Component</td>
+<td align="left">GOCC</td>
+</tr>
+<tr class="odd">
+<td align="left">Phenotype</td>
+<td align="left">Human Phenotype Phenotypic Abnormality</td>
+<td align="left">HPPA</td>
+</tr>
+<tr class="even">
+<td align="left">Phenotype</td>
+<td align="left">Human Phenotype Mode of Inheritance</td>
+<td align="left">HPMI</td>
+</tr>
+<tr class="odd">
+<td align="left">Phenotype</td>
+<td align="left">Human Phenotype Clinical Modifier</td>
+<td align="left">HPCM</td>
+</tr>
+<tr class="even">
+<td align="left">Phenotype</td>
+<td align="left">Human Phenotype Mortality Aging</td>
+<td align="left">HPMA</td>
+</tr>
+<tr class="odd">
+<td align="left">Phenotype</td>
+<td align="left">Mammalian/Mouse Phenotype</td>
+<td align="left">MP</td>
+</tr>
+<tr class="even">
+<td align="left">Druggable</td>
+<td align="left">DGI druggable gene categories</td>
+<td align="left">DGIdb</td>
+</tr>
+<tr class="odd">
+<td align="left">Domain</td>
+<td align="left">SCOP domain superfamilies</td>
+<td align="left">SF</td>
+</tr>
+<tr class="even">
+<td align="left">Evolution</td>
+<td align="left">phylostratific age information (our ancestors)</td>
+<td align="left">PS2</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">Hallmark gene sets</td>
+<td align="left">MsigdbH</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">Chromosome and cytogenetic band positional gene sets</td>
+<td align="left">MsigdbC1</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">Chemical and genetic perturbation gene sets</td>
+<td align="left">MsigdbC2CGP</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">All pathway gene sets</td>
+<td align="left">MsigdbC2CPall</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">Canonical pathway gene sets</td>
+<td align="left">MsigdbC2CP</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">KEGG pathway gene sets</td>
+<td align="left">MsigdbC2KEGG</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">Reactome pathway gene sets</td>
+<td align="left">MsigdbC2REACTOME</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">BioCarta pathway gene sets</td>
+<td align="left">MsigdbC2BIOCARTA</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">Transcription factor target gene sets</td>
+<td align="left">MsigdbC3TFT</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">microRNA target gene sets</td>
+<td align="left">MsigdbC3MIR</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">Cancer gene neighborhood gene sets</td>
+<td align="left">MsigdbC4CGN</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">Cancer module gene sets</td>
+<td align="left">MsigdbC4CM</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">GO biological process gene sets</td>
+<td align="left">MsigdbC5BP</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">GO molecular function gene sets</td>
+<td align="left">MsigdbC5MF</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">GO cellular component gene sets</td>
+<td align="left">MsigdbC5CC</td>
+</tr>
+<tr class="even">
+<td align="left">MsigDB</td>
+<td align="left">Oncogenic signature gene sets</td>
+<td align="left">MsigdbC6</td>
+</tr>
+<tr class="odd">
+<td align="left">MsigDB</td>
+<td align="left">Immunologic signature gene sets</td>
+<td align="left">MsigdbC7</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="annotations-at-the-genomic-region-level" class="section level2">
+<h2><span class="header-section-number">4.2</span> Annotations at the genomic region level</h2>
+<table>
+<caption>Data types, sources, and identifier codes used in XGR are summarised below</caption>
+<thead>
+<tr class="header">
+<th align="left">Category</th>
+<th align="left">Source</th>
+<th align="left">Genomic Annotations</th>
+<th align="left">Identifier Codes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">TFBS</td>
+<td align="left">ENCODE</td>
+<td align="left">Cell-type-specific TFBS uniformly identified</td>
+<td align="left">Uniform_TFBS</td>
+</tr>
+<tr class="even">
+<td align="left">TFBS</td>
+<td align="left">ENCODE</td>
+<td align="left">Clustered TFBS</td>
+<td align="left">ENCODE_TFBS_ClusteredV3</td>
+</tr>
+<tr class="odd">
+<td align="left">TFBS</td>
+<td align="left">ENCODE</td>
+<td align="left">Cell-type-specific clustered TFBS</td>
+<td align="left">ENCODE_TFBS_ClusteredV3_CellTypes</td>
+</tr>
+<tr class="even">
+<td align="left">DHS</td>
+<td align="left">ENCODE</td>
+<td align="left">Cell-type-specific DHS uniformly identified</td>
+<td align="left">Uniform_DNaseI_HS</td>
+</tr>
+<tr class="odd">
+<td align="left">DHS</td>
+<td align="left">ENCODE</td>
+<td align="left">Clustered DHS</td>
+<td align="left">ENCODE_DNaseI_ClusteredV3</td>
+</tr>
+<tr class="even">
+<td align="left">DHS</td>
+<td align="left">ENCODE</td>
+<td align="left">Cell-type-specific clustered DHS</td>
+<td align="left">ENCODE_DNaseI_ClusteredV3_CellTypes</td>
+</tr>
+<tr class="odd">
+<td align="left">Histone Modifications</td>
+<td align="left">ENCODE</td>
+<td align="left">Cell-type-specific histone modifications</td>
+<td align="left">Broad_Histone</td>
+</tr>
+<tr class="even">
+<td align="left">Histone Modifications</td>
+<td align="left">ENCODE</td>
+<td align="left">Cell-type-specific histone modifications</td>
+<td align="left">SYDH_Histone</td>
+</tr>
+<tr class="odd">
+<td align="left">Histone Modifications</td>
+<td align="left">ENCODE</td>
+<td align="left">Cell-type-specific histone modifications</td>
+<td align="left">UW_Histone</td>
+</tr>
+<tr class="even">
+<td align="left">Expressed Enhancers</td>
+<td align="left">FANTOM5</td>
+<td align="left">Cell-type-specific expressed enhancers</td>
+<td align="left">FANTOM5_Enhancer_Cell</td>
+</tr>
+<tr class="odd">
+<td align="left">Expressed Enhancers</td>
+<td align="left">FANTOM5</td>
+<td align="left">Tissue-specific expressed enhancers</td>
+<td align="left">FANTOM5_Enhancer_Tissue</td>
+</tr>
+<tr class="even">
+<td align="left">Expressed Enhancers</td>
+<td align="left">FANTOM5</td>
+<td align="left">Extensive enhancers</td>
+<td align="left">FANTOM5_Enhancer_Extensive</td>
+</tr>
+<tr class="odd">
+<td align="left">Expressed Enhancers</td>
+<td align="left">FANTOM5</td>
+<td align="left">Full collections of enhancers</td>
+<td align="left">FANTOM5_Enhancer</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">ENCODE</td>
+<td align="left">Combined genome segmentation for GM12878</td>
+<td align="left">Segment_Combined_Gm12878</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">ENCODE</td>
+<td align="left">Combined genome segmentation for H1-hESC</td>
+<td align="left">Segment_Combined_H1hesc</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">ENCODE</td>
+<td align="left">Combined genome segmentation for HeLa S3</td>
+<td align="left">Segment_Combined_Helas3</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">ENCODE</td>
+<td align="left">Combined genome segmentation for HepG2</td>
+<td align="left">Segment_Combined_Hepg2</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">ENCODE</td>
+<td align="left">Combined genome segmentation for HUVEC</td>
+<td align="left">Segment_Combined_Huvec</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">ENCODE</td>
+<td align="left">Combined genome segmentation for K562</td>
+<td align="left">Segment_Combined_K562</td>
+</tr>
+<tr class="even">
+<td align="left">Conserved TFBS</td>
+<td align="left">TRANSFAC</td>
+<td align="left">PWM human/mouse/rat conserved TFBS</td>
+<td align="left">TFBS_Conserved</td>
+</tr>
+<tr class="odd">
+<td align="left">miRNA regulatory sites</td>
+<td align="left">TargetScan</td>
+<td align="left">miRNA regulatory sites</td>
+<td align="left">TS_miRNA</td>
+</tr>
+<tr class="even">
+<td align="left">Cancer mutations</td>
+<td align="left">TCGA</td>
+<td align="left">Tumor-type-specific exome mutations</td>
+<td align="left">TCGA</td>
+</tr>
+<tr class="odd">
+<td align="left">TFBS</td>
+<td align="left">ReMap</td>
+<td align="left">GSE-derived TFBS</td>
+<td align="left">ReMap_Public_TFBS</td>
+</tr>
+<tr class="even">
+<td align="left">TFBS</td>
+<td align="left">ReMap</td>
+<td align="left">Merged TFBS across GSE studies</td>
+<td align="left">ReMap_Public_mergedTFBS</td>
+</tr>
+<tr class="odd">
+<td align="left">TFBS</td>
+<td align="left">ReMap</td>
+<td align="left">Merged TFBS across GSE studies and ENCODE</td>
+<td align="left">ReMap_PublicAndEncode_mergedTFBS</td>
+</tr>
+<tr class="even">
+<td align="left">TFBS</td>
+<td align="left">ReMap</td>
+<td align="left">ENCODE-derived TFBS (ignoring cell type information)</td>
+<td align="left">ReMap_Encode_TFBS</td>
+</tr>
+<tr class="odd">
+<td align="left">Histone Modifications</td>
+<td align="left">Blueprint</td>
+<td align="left">Bone-marrow-specific histone modifications</td>
+<td align="left">Blueprint_BoneMarrow_Histone</td>
+</tr>
+<tr class="even">
+<td align="left">Histone Modifications</td>
+<td align="left">Blueprint</td>
+<td align="left">Cell-line-specific histone modifications</td>
+<td align="left">Blueprint_CellLine_Histone</td>
+</tr>
+<tr class="odd">
+<td align="left">Histone Modifications</td>
+<td align="left">Blueprint</td>
+<td align="left">Cord-blood-specific histone modifications</td>
+<td align="left">Blueprint_CordBlood_Histone</td>
+</tr>
+<tr class="even">
+<td align="left">Histone Modifications</td>
+<td align="left">Blueprint</td>
+<td align="left">Thymus-specific histone modifications</td>
+<td align="left">Blueprint_Thymus_Histone</td>
+</tr>
+<tr class="odd">
+<td align="left">Histone Modifications</td>
+<td align="left">Blueprint</td>
+<td align="left">Venous-blood-specific histone modifications</td>
+<td align="left">Blueprint_VenousBlood_Histone</td>
+</tr>
+<tr class="even">
+<td align="left">DHS</td>
+<td align="left">Blueprint</td>
+<td align="left">Sample-specific DHS</td>
+<td align="left">Blueprint_DNaseI</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="ontology-annotations-at-the-snp-level" class="section level2">
+<h2><span class="header-section-number">4.3</span> Ontology annotations at the SNP level</h2>
+<p>SNP annotations are based on the Experimental Factor Ontology (EFO). EFO standardises GWAS traits from the NHGRI GWAS Catalog using well-defined terms <span class="citation">(Welter et al. 2014)</span>. Knowledge of co-inherited variants is also used to include additional SNPs that are in Linkage Disequilibrium (LD) with GWAS lead SNPs. LD SNPs are calculated based on the 1000 Genomes Project data <span class="citation">(1000 Genomes Project Consortium 2012)</span>. LD SNPs are defined to be any SNPs having R2&gt;0.8 with GWAS lead SNPs.</p>
+<table>
+<caption>List of populations used to calculate LD SNPs</caption>
+<thead>
+<tr class="header">
+<th align="left">Identifier Code</th>
+<th align="left">Population</th>
+<th align="left">Project</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">AFR</td>
+<td align="left">African</td>
+<td align="left">1000 Genomes Project</td>
+</tr>
+<tr class="even">
+<td align="left">AMR</td>
+<td align="left">Admixed American</td>
+<td align="left">1000 Genomes Project</td>
+</tr>
+<tr class="odd">
+<td align="left">EAS</td>
+<td align="left">East Asian</td>
+<td align="left">1000 Genomes Project</td>
+</tr>
+<tr class="even">
+<td align="left">EUR</td>
+<td align="left">European</td>
+<td align="left">1000 Genomes Project</td>
+</tr>
+<tr class="odd">
+<td align="left">SAS</td>
+<td align="left">South Asian</td>
+<td align="left">1000 Genomes Project</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="interaction-networks-at-the-gene-level" class="section level2">
+<h2><span class="header-section-number">4.4</span> Interaction networks at the gene level</h2>
+<p>XGR support networks of different interaction types (functional, physical, and pathway-derived), of varying interaction quality (highest, high, and medium) and of two interaction directions (directed versus undirected). These are mainly sourced from the STRING database <span class="citation">(Szklarczyk et al. 2015)</span> and the Pathway Commons database <span class="citation">(Cerami et al. 2011)</span>. STRING is a meta-integration of undirect interactions from a functional aspect, while Pathway Commons mainly contains both undirect and direct interactions from a physical/pathway aspect. In addition to interaction type, users can choose the interactions of varying quality:</p>
+<table>
+<caption>Database, interaction type and quality, and identifier codes used in XGR are summarised below</caption>
+<thead>
+<tr class="header">
+<th align="left">Identifier Code</th>
+<th align="left">Interaction (type and quality)</th>
+<th align="left">Database</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">STRING_high</td>
+<td align="left">Functional interactions (with high confidence scores&gt;=700)</td>
+<td align="left">STRING</td>
+</tr>
+<tr class="even">
+<td align="left">STRING_medium</td>
+<td align="left">Functional interactions (with medium confidence scores&gt;=400)</td>
+<td align="left">STRING</td>
+</tr>
+<tr class="odd">
+<td align="left">PCommonsUN_high</td>
+<td align="left">Physical/undirect interactions (with references &amp; &gt;=2 sources)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="even">
+<td align="left">PCommonsUN_medium</td>
+<td align="left">Physical/undirect interactions (with references &amp; &gt;=1 sources)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="odd">
+<td align="left">PCommonsDN_high</td>
+<td align="left">Pathway/direct interactions (with references &amp; &gt;=2 sources)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="even">
+<td align="left">PCommonsDN_medium</td>
+<td align="left">Pathway/direct interactions (with references &amp; &gt;=1 sources)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>For the pathway-merged direct interactions, networks sourced individually are also supported</caption>
+<thead>
+<tr class="header">
+<th align="left">Identifier Code</th>
+<th align="left">Interaction (source)</th>
+<th align="left">Database</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">PCommonsDN_Reactome</td>
+<td align="left">Pathway/direct interactions (only from Reactome)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="even">
+<td align="left">PCommonsDN_KEGG</td>
+<td align="left">Pathway/direct interactions (only from KEGG)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="odd">
+<td align="left">PCommonsDN_HumanCyc</td>
+<td align="left">Pathway/direct interactions (only from HumanCyc)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="even">
+<td align="left">PCommonsDN_PID</td>
+<td align="left">Pathway/direct interactions (only from PID)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="odd">
+<td align="left">PCommonsDN_PANTHER</td>
+<td align="left">Pathway/direct interactions (only from PANTHER)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="even">
+<td align="left">PCommonsDN_ReconX</td>
+<td align="left">Pathway/direct interactions (only from ReconX)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="odd">
+<td align="left">PCommonsDN_PhosphoSite</td>
+<td align="left">Pathway/direct interactions (only from PhosphoSite)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+<tr class="even">
+<td align="left">PCommonsDN_CTD</td>
+<td align="left">Pathway/direct interactions (only from CTD)</td>
+<td align="left">Pathway Commons</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="functionality" class="section level1">
-<h1><span class="header-section-number">4</span> Functionality</h1>
+<h1><span class="header-section-number">5</span> Functionality</h1>
 <p>The functions in the package <code>XGR</code> are categorised into five groups according to the tasks they complete. They are summarised below.</p>
 <div id="enrichment-functions" class="section level2">
-<h2><span class="header-section-number">4.1</span> Enrichment functions</h2>
+<h2><span class="header-section-number">5.1</span> Enrichment functions</h2>
 <p>Enrichment functions are supposed to do enrichment analysis based on several statistical tests (either Fisher’s exact test or hypergeometric/binomial test). The test is to estimate significance of overlaps between, for example, an input group of genes and a group of genes annotated by an ontology term. By default, all annotatable genes are used as the test background but can be specified by the user. If ontology terms are organised as a tree-like structure, this ontology structure can also be taken into account to produce more informative results. Particularly for a non-structure ontologies (eg a collection of pathways), a filtering procedure is also developed to generate non-redundant but informative results.</p>
 <div id="xenrichergenes" class="section level3">
-<h3><span class="header-section-number">4.1.1</span> xEnricherGenes</h3>
+<h3><span class="header-section-number">5.1.1</span> xEnricherGenes</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnricherGenes.html"><code>xEnricherGenes</code></a></em>: conducts gene-based enrichment analysis given a list of genes and the ontology in query. It supports two types of ontologies: 1) structured ontologies including Gene Ontology <span class="citation">(Ashburner et al. 2000)</span>, Disease Ontology <span class="citation">(Schriml et al. 2012)</span>, and Phenotype Ontologies in human and mouse <span class="citation">(Köhler et al. 2013; C. L. Smith and Eppig 2009)</span>, and 2) non-structured ontologies/categories; for example, a collection of pathways, gene expression signatures, transcription factor targets, and gene druggable categories.</p>
 </div>
 <div id="xenrichersnps" class="section level3">
-<h3><span class="header-section-number">4.1.2</span> xEnricherSNPs</h3>
+<h3><span class="header-section-number">5.1.2</span> xEnricherSNPs</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnricherSNPs.html"><code>xEnricherSNPs</code></a></em>: conducts SNP-based enrichment analysis using GWAS Catalog traits mapped to Experimental Factor Ontology <span class="citation">(Welter et al. 2014)</span>. Inclusion of additional SNPs that are in linkage disequilibrium (LD) with input SNPs are also allowed for enrichment analysis.</p>
 </div>
 <div id="xenricheryours" class="section level3">
-<h3><span class="header-section-number">4.1.3</span> xEnricherYours</h3>
+<h3><span class="header-section-number">5.1.3</span> xEnricherYours</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnricherYours.html"><code>xEnricherYours</code></a></em>: conducts custom-based enrichment analysis provided with an entity file and an annotation file.</p>
 </div>
 <div id="xenricher" class="section level3">
-<h3><span class="header-section-number">4.1.4</span> xEnricher</h3>
+<h3><span class="header-section-number">5.1.4</span> xEnricher</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnricher.html"><code>xEnricher</code></a></em>: acts as a template for enrichment analysis. It is an internal function upon which high-level functions (ie <code>xEnricherGenes</code>, <code>xEnricherSNPs</code> and <code>xEnricherYours</code>) rely.</p>
 </div>
 <div id="xenrichviewer" class="section level3">
-<h3><span class="header-section-number">4.1.5</span> xEnrichViewer</h3>
+<h3><span class="header-section-number">5.1.5</span> xEnrichViewer</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichViewer.html"><code>xEnrichViewer</code></a></em>: views enrichment results as a data frame that is also useful for the subsequent file saving.</p>
 </div>
 <div id="xenrichconciser" class="section level3">
-<h3><span class="header-section-number">4.1.6</span> xEnrichConciser</h3>
+<h3><span class="header-section-number">5.1.6</span> xEnrichConciser</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichConciser.html"><code>xEnrichConciser</code></a></em>: makes enrichment results much clearer by removing redundant terms. A redundant term is claimed if its overlapped part with a more significant term meets both criteria: covers more than 95% of this redundant term but no more than 50% of the more significant term. In doing so, only non-redundant but informative terms will be left.</p>
 </div>
 <div id="xenrichbarplot" class="section level3">
-<h3><span class="header-section-number">4.1.7</span> xEnrichBarplot</h3>
+<h3><span class="header-section-number">5.1.7</span> xEnrichBarplot</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichBarplot.html"><code>xEnrichBarplot</code></a></em>: visualises enrichment results using a barplot.</p>
 </div>
 <div id="xenrichdagplot" class="section level3">
-<h3><span class="header-section-number">4.1.8</span> xEnrichDAGplot</h3>
+<h3><span class="header-section-number">5.1.8</span> xEnrichDAGplot</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichDAGplot.html"><code>xEnrichDAGplot</code></a></em>: visualises enrichment results using a DAG plot. This function is only useful for tree-like structured ontologies. Significant terms (of interest) are highlighted by box-shaped nodes, and the others by ellipse nodes.</p>
 </div>
 <div id="xenrichcompare" class="section level3">
-<h3><span class="header-section-number">4.1.9</span> xEnrichCompare</h3>
+<h3><span class="header-section-number">5.1.9</span> xEnrichCompare</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichCompare.html"><code>xEnrichCompare</code></a></em>: compares enrichment results using side-by-side barplots. This function is useful when comparing enrichment results for different inputs but based on the same ontology.</p>
 </div>
 <div id="xenrichdagplotadv" class="section level3">
-<h3><span class="header-section-number">4.1.10</span> xEnrichDAGplotAdv</h3>
+<h3><span class="header-section-number">5.1.10</span> xEnrichDAGplotAdv</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichDAGplotAdv.html"><code>xEnrichDAGplotAdv</code></a></em>: visualises comparative enrichment results using a DAG plot. This function takes input the output of the function <code>xEnrichCompare</code> to further illustrate differences and commonalities of comparative enrichment results in the context of ontology tree.</p>
 </div>
 </div>
 <div id="similarity-functions" class="section level2">
-<h2><span class="header-section-number">4.2</span> Similarity functions</h2>
-<p>Similarity functions serve to conduct similarity analysis calculating semantic similarity - a type of comparison to assess the degree of relatedness between two entities (eg genes) based on their annotation profiles (by ontology terms). To do so, information content (IC) of a term is first defined to measure how informative a term is to being used for annotating genes: –log10(frequency of genes annotated to this term). Similarity between two terms are then measured based on IC, usually at the most informative common ancester (MICA). Finally, similarity between two entities (eg genes) are derived from pairwise term similarity using best-matching based methods: average, maximum, and complete.</p>
+<h2><span class="header-section-number">5.2</span> Similarity functions</h2>
+<p>Similarity functions serve to conduct similarity analysis calculating semantic similarity - a type of comparison to assess the degree of relatedness between two entities (eg genes or SNPs) based on their annotation profiles (by ontology terms) <span class="citation">(Pesquita et al. 2009)</span>. To do so, information content (IC) of a term is first defined to measure how informative a term is to being used for annotating genes: –log10(frequency of genes annotated to this term). Similarity between two terms are then measured based on IC, usually at the most informative common ancester (MICA). Finally, similarity between two entities (eg genes) are derived from pairwise term similarity using best-matching based methods: average, maximum, and complete.</p>
 <div id="xsocialisergenes" class="section level3">
-<h3><span class="header-section-number">4.2.1</span> xSocialiserGenes</h3>
+<h3><span class="header-section-number">5.2.1</span> xSocialiserGenes</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSocialiserGenes.html"><code>xSocialiserGenes</code></a></em>: conducts gene-based similarity analysis given a list of genes and the ontology in query. It supports several structured ontologies including Gene Ontology, Disease Ontology, and Phenotype Ontologies (in human and mouse), and returns socialised genes represented as a network with nodes for input genes and edges for pair-wise semantic similarity between them.</p>
 </div>
 <div id="xsocialisersnps" class="section level3">
-<h3><span class="header-section-number">4.2.2</span> xSocialiserSNPs</h3>
+<h3><span class="header-section-number">5.2.2</span> xSocialiserSNPs</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSocialiserSNPs.html"><code>xSocialiserSNPs</code></a></em>: conducts SNP-based similarity analysis using GWAS Catalog traits mapped to Experimental Factor Ontology. Inclusion of additional SNPs that are in linkage disequilibrium (LD) with input SNPs are also allowed for similarity analysis. It returns socialised SNPs represented as a network with nodes for input SNPs and edges for pair-wise semantic similarity between them.</p>
 </div>
 <div id="xsocialiser" class="section level3">
-<h3><span class="header-section-number">4.2.3</span> xSocialiser</h3>
+<h3><span class="header-section-number">5.2.3</span> xSocialiser</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSocialiser.html"><code>xSocialiser</code></a></em>: acts as a template for similarity analysis. It is an internal function upon which high-level functions (ie <code>xSocialiserGenes</code> and <code>xSocialiserSNPs</code>) rely.</p>
 </div>
 <div id="xcircos" class="section level3">
-<h3><span class="header-section-number">4.2.4</span> xCircos</h3>
+<h3><span class="header-section-number">5.2.4</span> xCircos</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xCircos.html"><code>xCircos</code></a></em>: visualises the similarity results using a circos plot. The degree of similarity between SNPs (or genes) is visualised by the colour of links. This function can be used either to visualise the most similar links or to plot links involving an input SNP (or gene).</p>
 </div>
 <div id="xsocialiserdagplot" class="section level3">
-<h3><span class="header-section-number">4.2.5</span> xSocialiserDAGplot</h3>
+<h3><span class="header-section-number">5.2.5</span> xSocialiserDAGplot</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSocialiserDAGplot.html"><code>xSocialiserDAGplot</code></a></em>: visualises terms used to annotate an input SNP (or gene) using a DAG plot. Terms used for direct/original annotations by box-shaped nodes, and terms for indirect/inherited annotations by ellipse nodes. This function is part of utilities in understanding calculated similarity.</p>
 </div>
 <div id="xsocialiserdagplotadv" class="section level3">
-<h3><span class="header-section-number">4.2.6</span> xSocialiserDAGplotAdv</h3>
+<h3><span class="header-section-number">5.2.6</span> xSocialiserDAGplotAdv</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSocialiserDAGplotAdv.html"><code>xSocialiserDAGplotAdv</code></a></em>: uses a DAG plot to visualise and compare two sets of terms used to annotate two input SNPs (or genes) that are predicted to be similar. This function is part of utilities in understanding calculated similarity.</p>
 </div>
 </div>
 <div id="network-functions" class="section level2">
-<h2><span class="header-section-number">4.3</span> Network functions</h2>
+<h2><span class="header-section-number">5.3</span> Network functions</h2>
 <p>Network functions are supposed to identify a gene subnetwork from a gene interaction network with node/gene significant information. The node/gene information can be either directly provided (eg user-defined genes with the significance level; p-values or FDR) or indirectly provided (eg nearby genes of user-defined SNPs with the significance level; GWAS reported p-values). From a gene interaction network with nodes labelled with gene information, the algorithm searching for a maximum-scoring gene subnetwork has been reported in our previous publication <span class="citation">(Fang and Gough 2014)</span>), briefed as follows: 1) <code>score transformation</code>, that is, given the threshold of tolerable p-value, nodes with p-values below this threshold (nodes of interest) are scored positively, and negative scores for nodes with threshold-above p-values (intolerable), 2) <code>subnetwork identification</code>, that is, to find an interconnected gene subnetwork enriched with positive-score nodes, but allowing for a few negative-score nodes as linkers, and 3) <code>controlling the subnetwork size</code>, that is, an iterative procedure is provided to finetune tolerable thresholds for identifying the gene subnetwork with a desired number of nodes.</p>
 <div id="xsubnetergenes" class="section level3">
-<h3><span class="header-section-number">4.3.1</span> xSubneterGenes</h3>
+<h3><span class="header-section-number">5.3.1</span> xSubneterGenes</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSubneterGenes.html"><code>xSubneterGenes</code></a></em>: takes as input a list of user-defined genes with the significance level (p-values), superposes these genes onto a gene interaction network, and outputs a maximum-scoring gene subnetwork that contains as many most significant (highly scored) genes as possible but also a few lesser significant (scored) genes as linkers.</p>
 </div>
 <div id="xsnp2genescores" class="section level3">
-<h3><span class="header-section-number">4.3.2</span> xSNP2GeneScores</h3>
+<h3><span class="header-section-number">5.3.2</span> xSNP2GeneScores</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSNP2GeneScores.html"><code>xSNP2GeneScores</code></a></em>: takes as input a list of user-defined SNPs with the significance level (eg GWAS reported p-values), and defines and scores nearby genes that take into account the distance to and the significance of input SNPs.</p>
 </div>
 <div id="xsubnetersnps" class="section level3">
-<h3><span class="header-section-number">4.3.3</span> xSubneterSNPs</h3>
+<h3><span class="header-section-number">5.3.3</span> xSubneterSNPs</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSubneterSNPs.html"><code>xSubneterSNPs</code></a></em>: identifies a gene subnetwork that is likely modulated by input SNPs and/or their Linkage Disequilibrium (LD) SNPs, including two major steps. The first step is to use <code>xSNP2GeneScores</code> for defining and scoring nearby genes that are located within distance window of input and/or LD SNPs. The second step is to use <code>xSubneterGenes</code> for identifying a maximum-scoring gene subnetwork.</p>
 </div>
 </div>
 <div id="annotation-functions" class="section level2">
-<h2><span class="header-section-number">4.4</span> Annotation functions</h2>
+<h2><span class="header-section-number">5.4</span> Annotation functions</h2>
 <p>Annotation functions are supposed to interpret user-defined list of genomic regions either via looking at nearby gene annotations by ontologies or via looking at co-localised functional genomic annotations.</p>
 <div id="xgrviageneanno" class="section level3">
-<h3><span class="header-section-number">4.4.1</span> xGRviaGeneAnno</h3>
+<h3><span class="header-section-number">5.4.1</span> xGRviaGeneAnno</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRviaGeneAnno.html"><code>xGRviaGeneAnno</code></a></em>: conducts region-based enrichment analysis using nearby gene annotations, including two major steps. The first step is to define nearby genes within the maximum distance gap between genomic regions and gene location. The second step is to use <code>xEnricherGenes</code> for enrichment analysis to identify enriched terms.</p>
 </div>
 <div id="xgrviagenomicanno" class="section level3">
-<h3><span class="header-section-number">4.4.2</span> xGRviaGenomicAnno</h3>
-<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRviaGenomicAnno.html"><code>xGRviaGeneAnno</code></a></em>: conducts region-based enrichment analysis using functional genomic annotations. Enrichment analysis is based on binomial test for estimating the significance of overlaps at the base resolution. Genomic annotations cover a broad spectrum of genetic and epigenetic knowledge, including functional genomic data experimentally generated by the consortia (such as ENCODE, FANTOM, Blueprint and TCGA) and comparative genomic data predicted by the computational methods.</p>
+<h3><span class="header-section-number">5.4.2</span> xGRviaGenomicAnno</h3>
+<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRviaGenomicAnno.html"><code>xGRviaGeneAnno</code></a></em>: conducts region-based enrichment analysis using functional genomic annotations. Enrichment analysis is based on binomial test for estimating the significance of overlaps at the base resolution. Genomic annotations cover a broad spectrum of genetic and epigenetic knowledge, including functional genomic data experimentally generated by the consortia such as ENCODE <span class="citation">(Bernstein et al. 2012)</span>, FANTOM <span class="citation">(Forrest et al. 2014)</span>, BLUEPRINT <span class="citation">(Adams et al. 2012)</span> and TCGA <span class="citation">(Kandoth et al. 2013)</span>, and comparative genomic data predicted by the computational methods.</p>
 </div>
 <div id="xgrviagenomicannoadv" class="section level3">
-<h3><span class="header-section-number">4.4.3</span> xGRviaGenomicAnnoAdv</h3>
+<h3><span class="header-section-number">5.4.3</span> xGRviaGenomicAnnoAdv</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRviaGenomicAnnoAdv.html"><code>xGRviaGenomicAnnoAdv</code></a></em>: conducts region-based enrichment analysis using functional genomic annotations. Enrichment analysis is achieved by comparing the observed overlaps against the expected overlaps which are estimated from the null distribution. The null distribution is generated via sampling, that is, randomly generating samples for data genomic regions from background genomic regions. Background genomic regions can be provided by the user; by default, the annotatable genomic regions will be used. Since sampling is time-consuming, the parallel computation is also supported for Unix-like computers.</p>
 </div>
 </div>
 <div id="infrastructure-functions" class="section level2">
-<h2><span class="header-section-number">4.5</span> Infrastructure functions</h2>
+<h2><span class="header-section-number">5.5</span> Infrastructure functions</h2>
 <p>Infrastructure functions are essential as they deal with infrastructure including built-in data loading, ontology annotation propagation, calculation of term-term semantic similarity, graph conversions and visualisations, and define and score genes likely modulated by SNPs.</p>
 <ul>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xRDataLoader.html"><code>xRDataLoader</code></a></em>: serves as hub for loading built-in data about genes, SNPs, ontologies and annotations.</li>
@@ -414,7 +926,7 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 </ul>
 </div>
 <div id="auxiliary-functions" class="section level2">
-<h2><span class="header-section-number">4.6</span> Auxiliary functions</h2>
+<h2><span class="header-section-number">5.6</span> Auxiliary functions</h2>
 <p>Auxiliary functions provide supplementary supports during the package development, such as code debugging and documentation creating.</p>
 <ul>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xFunArgs.html"><code>xFunArgs</code></a></em>: assigns arguments with default values for a given function, useful for code debugging.</li>
@@ -424,39 +936,69 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 </div>
 </div>
 <div id="showcases" class="section level1">
-<h1><span class="header-section-number">5</span> Showcases</h1>
-<p>An essential step of data analysis is how to make sense of a gene (or SNP) list in a biologically-meaningful way. Genes (and/or SNPs) may be identified from differential expression studies, GWAS and eQTL mappings. We showcase the applications using several published datasets. The users are encouraged to adapt the provided codes to analyse their own datasets.</p>
+<h1><span class="header-section-number">6</span> Showcases</h1>
+<p>An essential step of data analysis is how to make sense of a gene (or SNP) list in a biologically-meaningful way. Genes (and/or SNPs) may be identified from differential expression studies, GWAS and eQTL mappings. We showcase the applications using several published datasets <span class="citation">(Fairfax et al. 2014)</span>. The users are encouraged to adapt the provided codes to analyse their own datasets.</p>
 <div id="interpreting-differential-genes" class="section level2">
-<h2><span class="header-section-number">5.1</span> Interpreting differential genes</h2>
+<h2><span class="header-section-number">6.1</span> Interpreting differential genes</h2>
 <p><em><a href="http://galahad.well.ox.ac.uk/XGR/XGR_differential_genes.html"><code>Demo Series 1</code></a></em>: using the XGR package to interpret summary data resulting from differential expression studies</p>
 </div>
 <div id="interpreting-gwas-snps" class="section level2">
-<h2><span class="header-section-number">5.2</span> Interpreting GWAS SNPs</h2>
+<h2><span class="header-section-number">6.2</span> Interpreting GWAS SNPs</h2>
 <p><em><a href="http://galahad.well.ox.ac.uk/XGR/XGR_GWAS_SNPs.html"><code>Demo Series 2</code></a></em>: using the XGR package to interpret GWAS summary data</p>
 </div>
 <div id="interpreting-eqtl-snps" class="section level2">
-<h2><span class="header-section-number">5.3</span> Interpreting eQTL SNPs</h2>
+<h2><span class="header-section-number">6.3</span> Interpreting eQTL SNPs</h2>
 <p><em><a href="http://galahad.well.ox.ac.uk/XGR/XGR_eQTL_SNPs.html"><code>Demo Series 3</code></a></em>: using the XGR package to interpret eQTL summary data</p>
 </div>
 </div>
 <div id="references" class="section level1">
-<h1><span class="header-section-number">6</span> References</h1>
+<h1><span class="header-section-number">7</span> References</h1>
 <p><strong>Below is the list of references that XGR stands on:</strong></p>
 <div id="refs" class="references">
+<div id="ref-Project2012">
+<p>1000 Genomes Project Consortium. 2012. “An integrated map of genetic variation from 1,092 human genomes.” <em>Nature</em> 491 (7422): 56–65. doi:<a href="https://doi.org/10.1038/nature11632">10.1038/nature11632</a>.</p>
+</div>
+<div id="ref-Adams2012">
+<p>Adams, D, L Altucci, Se Antonarakis, J Ballesteros, S Beck, A Bird, C Bock, et al. 2012. “BLUEPRINT to decode the epigenetic signature written in blood.” <em>Nature Biotechnology</em> 30 (3). doi:<a href="https://doi.org/10.1038/nbt.2153">10.1038/nbt.2153</a>.</p>
+</div>
 <div id="ref-Ashburner2000">
 <p>Ashburner, M, C A Ball, J A Blake, D Botstein, H Butler, J M Cherry, A P Davis, et al. 2000. “Gene ontology: tool for the unification of biology. The Gene Ontology Consortium.” <em>Nat Genet</em> 25 (1): 25–29. doi:<a href="https://doi.org/10.1038/75556">10.1038/75556</a>.</p>
+</div>
+<div id="ref-Bernstein2012">
+<p>Bernstein, Bradley E, Ewan Birney, Ian Dunham, Eric D Green, Chris Gunter, and Michael Snyder. 2012. “An integrated encyclopedia of DNA elements in the human genome.” <em>Nature</em> 489 (7414): 57–74. doi:<a href="https://doi.org/10.1038/nature11247">10.1038/nature11247</a>.</p>
+</div>
+<div id="ref-Cerami2011">
+<p>Cerami, E. G., B. E. Gross, E. Demir, I. Rodchenkov, O. Babur, N. Anwar, N. Schultz, G. D. Bader, and C. Sander. 2011. “Pathway Commons, a web resource for biological pathway data.” <em>Nucleic Acids Research</em> 39 (Database): D685–D690. doi:<a href="https://doi.org/10.1093/nar/gkq1039">10.1093/nar/gkq1039</a>.</p>
+</div>
+<div id="ref-Csardi2006">
+<p>Csardi, G, and T Nepusz. 2006. “The igraph software package for complex network research.” <em>InterJournal Complex Systems</em> 1695: 1695.</p>
+</div>
+<div id="ref-Fairfax2014">
+<p>Fairfax, Benjamin P, Peter Humburg, Seiko Makino, Vivek Naranbhai, Daniel Wong, Evelyn Lau, Luke Jostins, et al. 2014. “Innate immune activity conditions the effect of regulatory variants upon monocyte gene expression.” <em>Science (New York, N.Y.)</em> 343 (6175): 1246949. doi:<a href="https://doi.org/10.1126/science.1246949">10.1126/science.1246949</a>.</p>
 </div>
 <div id="ref-Fang2014c">
 <p>Fang, Hai, and Julian Gough. 2014. “The ’dnet’ approach promotes emerging research on cancer patient survival.” <em>Genome Medicine</em> 6 (8): 64. doi:<a href="https://doi.org/10.1186/s13073-014-0064-8">10.1186/s13073-014-0064-8</a>.</p>
 </div>
+<div id="ref-Forrest2014a">
+<p>Forrest, Alistair R. R., Hideya Kawaji, Michael Rehli, J. Kenneth Baillie, Michiel J. L. de Hoon, Vanja Haberle, Timo Lassmann, et al. 2014. “A promoter-level mammalian expression atlas.” <em>Nature</em> 507 (7493): 462–70. doi:<a href="https://doi.org/10.1038/nature13182">10.1038/nature13182</a>.</p>
+</div>
+<div id="ref-Kandoth2013b">
+<p>Kandoth, Cyriac, Michael D McLellan, Fabio Vandin, Kai Ye, Beifang Niu, Charles Lu, Mingchao Xie, et al. 2013. “Mutational landscape and significance across 12 major cancer types.” <em>Nature</em> 502 (7471): 333–9. doi:<a href="https://doi.org/10.1038/nature12634">10.1038/nature12634</a>.</p>
+</div>
 <div id="ref-Kohler2013">
-<p>Köhler, Sebastian, Sandra C Doelken, Christopher J Mungall, Sebastian Bauer, Helen V Firth, Isabelle Bailleul-Forestier, Graeme C M Black, et al. 2013. “The Human Phenotype Ontology project: linking molecular biology and disease through phenotype data.” <em>Nucleic Acids Research</em>, November, 1–9. doi:<a href="https://doi.org/10.1093/nar/gkt1026">10.1093/nar/gkt1026</a>.</p>
+<p>Köhler, Sebastian, Sandra C Doelken, Christopher J Mungall, Sebastian Bauer, Helen V Firth, Isabelle Bailleul-Forestier, Graeme C M Black, et al. 2013. “The Human Phenotype Ontology project: linking molecular biology and disease through phenotype data.” <em>Nucleic Acids Research</em> 42 (Database issue): D966–74. doi:<a href="https://doi.org/10.1093/nar/gkt1026">10.1093/nar/gkt1026</a>.</p>
+</div>
+<div id="ref-Pesquita2009">
+<p>Pesquita, C, D Faria, A O Falcao, P Lord, and F M Couto. 2009. “Semantic similarity in biomedical ontologies.” <em>PLoS Comput Biol</em> 5 (7): e1000443. doi:<a href="https://doi.org/10.1371/journal.pcbi.1000443">10.1371/journal.pcbi.1000443</a>.</p>
 </div>
 <div id="ref-Schriml2012">
 <p>Schriml, L M, C Arze, S Nadendla, Y W Chang, M Mazaitis, V Felix, G Feng, and W A Kibbe. 2012. “Disease Ontology: a backbone for disease semantic integration.” <em>Nucleic Acids Res</em> 40 (Database issue): D940–6. doi:<a href="https://doi.org/10.1093/nar/gkr972">10.1093/nar/gkr972</a>.</p>
 </div>
 <div id="ref-Smith2009">
 <p>Smith, C L, and J T Eppig. 2009. “The Mammalian Phenotype Ontology: enabling robust annotation and comparative analysis.” <em>Wiley Interdiscip Rev Syst Biol Med</em> 1 (3): 390–99. doi:<a href="https://doi.org/10.1002/wsbm.44">10.1002/wsbm.44</a>.</p>
+</div>
+<div id="ref-Szklarczyk2015">
+<p>Szklarczyk, Damian, Andrea Franceschini, Stefan Wyder, Kristoffer Forslund, Davide Heller, Jaime Huerta-cepas, Milan Simonovic, et al. 2015. “STRING v10 : protein – protein interaction networks , integrated over the tree of life.” <em>Nucleic Acids Res</em> 43 (Database): D447–D452. doi:<a href="https://doi.org/10.1093/nar/gku1003">10.1093/nar/gku1003</a>.</p>
 </div>
 <div id="ref-Welter2014">
 <p>Welter, Danielle, Jacqueline MacArthur, Joannella Morales, Tony Burdett, Peggy Hall, Heather Junkins, Alan Klemm, et al. 2014. “The NHGRI GWAS Catalog, a curated resource of SNP-trait associations.” <em>Nucleic Acids Research</em> 42 (D1): 1001–6. doi:<a href="https://doi.org/10.1093/nar/gkt1229">10.1093/nar/gkt1229</a>.</p>
