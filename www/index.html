@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
 
 
 
@@ -61,6 +61,9 @@ code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Doc
 code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
 code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+div.sourceCode {
+  overflow-x: visible;
+}
 </style>
 <style type="text/css">
   pre:not([class]) {
@@ -69,25 +72,7 @@ code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Inf
 </style>
 
 
-
-</head>
-
-<body>
-
 <style type="text/css">
-.main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
-img {
-  max-width:100%;
-  height: auto;
-}
 h1 {
   font-size: 34px;
 }
@@ -109,6 +94,30 @@ h5 {
 h6 {
   font-size: 12px;
 }
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
 .tabbed-pane {
   padding-top: 12px;
 }
@@ -129,12 +138,24 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script src="data:application/x-javascript;base64,CndpbmRvdy5pbml0aWFsaXplQ29kZUZvbGRpbmcgPSBmdW5jdGlvbihzaG93KSB7CgogIC8vIGhhbmRsZXJzIGZvciBzaG93LWFsbCBhbmQgaGlkZSBhbGwKICAkKCIjcm1kLXNob3ctYWxsLWNvZGUiKS5jbGljayhmdW5jdGlvbigpIHsKICAgICQoJ2Rpdi5yLWNvZGUtY29sbGFwc2UnKS5lYWNoKGZ1bmN0aW9uKCkgewogICAgICAkKHRoaXMpLmNvbGxhcHNlKCdzaG93Jyk7CiAgICB9KTsKICB9KTsKICAkKCIjcm1kLWhpZGUtYWxsLWNvZGUiKS5jbGljayhmdW5jdGlvbigpIHsKICAgICQoJ2Rpdi5yLWNvZGUtY29sbGFwc2UnKS5lYWNoKGZ1bmN0aW9uKCkgewogICAgICAkKHRoaXMpLmNvbGxhcHNlKCdoaWRlJyk7CiAgICB9KTsKICB9KTsKCiAgLy8gaW5kZXggZm9yIHVuaXF1ZSBjb2RlIGVsZW1lbnQgaWRzCiAgdmFyIGN1cnJlbnRJbmRleCA9IDE7CgogIC8vIHNlbGVjdCBhbGwgUiBjb2RlIGJsb2NrcwogIHZhciByQ29kZUJsb2NrcyA9ICQoJ3ByZS5yJyk7CiAgckNvZGVCbG9ja3MuZWFjaChmdW5jdGlvbigpIHsKCiAgICAvLyBjcmVhdGUgYSBjb2xsYXBzYWJsZSBkaXYgdG8gd3JhcCB0aGUgY29kZSBpbgogICAgdmFyIGRpdiA9ICQoJzxkaXYgY2xhc3M9ImNvbGxhcHNlIHItY29kZS1jb2xsYXBzZSI+PC9kaXY+Jyk7CiAgICBpZiAoc2hvdykKICAgICAgZGl2LmFkZENsYXNzKCdpbicpOwogICAgdmFyIGlkID0gJ3Jjb2RlLTY0M0UwRjM2JyArIGN1cnJlbnRJbmRleCsrOwogICAgZGl2LmF0dHIoJ2lkJywgaWQpOwogICAgJCh0aGlzKS5iZWZvcmUoZGl2KTsKICAgICQodGhpcykuZGV0YWNoKCkuYXBwZW5kVG8oZGl2KTsKCiAgICAvLyBhZGQgYSBzaG93IGNvZGUgYnV0dG9uIHJpZ2h0IGFib3ZlCiAgICB2YXIgc2hvd0NvZGVUZXh0ID0gJCgnPHNwYW4+JyArIChzaG93ID8gJ0hpZGUnIDogJ0NvZGUnKSArICc8L3NwYW4+Jyk7CiAgICB2YXIgc2hvd0NvZGVCdXR0b24gPSAkKCc8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9ImJ0biBidG4tZGVmYXVsdCBidG4teHMgY29kZS1mb2xkaW5nLWJ0biBwdWxsLXJpZ2h0Ij48L2J1dHRvbj4nKTsKICAgIHNob3dDb2RlQnV0dG9uLmFwcGVuZChzaG93Q29kZVRleHQpOwogICAgc2hvd0NvZGVCdXR0b24KICAgICAgICAuYXR0cignZGF0YS10b2dnbGUnLCAnY29sbGFwc2UnKQogICAgICAgIC5hdHRyKCdkYXRhLXRhcmdldCcsICcjJyArIGlkKQogICAgICAgIC5hdHRyKCdhcmlhLWV4cGFuZGVkJywgdHJ1ZSkKICAgICAgICAuYXR0cignYXJpYS1jb250cm9scycsIGlkKQogICAgICAgIC5jc3MoJ21hcmdpbi1ib3R0b20nLCAnNHB4Jyk7CgogICAgdmFyIGJ1dHRvblJvdyA9ICQoJzxkaXYgY2xhc3M9InJvdyI+PC9kaXY+Jyk7CiAgICB2YXIgYnV0dG9uQ29sID0gJCgnPGRpdiBjbGFzcz0iY29sLW1kLTEyIj48L2Rpdj4nKTsKCiAgICBidXR0b25Db2wuYXBwZW5kKHNob3dDb2RlQnV0dG9uKTsKICAgIGJ1dHRvblJvdy5hcHBlbmQoYnV0dG9uQ29sKTsKCiAgICBkaXYuYmVmb3JlKGJ1dHRvblJvdyk7CgogICAgLy8gdXBkYXRlIHN0YXRlIG9mIGJ1dHRvbiBvbiBzaG93L2hpZGUKICAgIGRpdi5vbignaGlkZGVuLmJzLmNvbGxhcHNlJywgZnVuY3Rpb24gKCkgewogICAgICBzaG93Q29kZVRleHQudGV4dCgnQ29kZScpOwogICAgfSk7CiAgICBkaXYub24oJ3Nob3cuYnMuY29sbGFwc2UnLCBmdW5jdGlvbiAoKSB7CiAgICAgIHNob3dDb2RlVGV4dC50ZXh0KCdIaWRlJyk7CiAgICB9KTsKICB9KTsKCn0K"></script>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
 
 <script>
 $(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
     // establish options
     var options = {
       selectors: "h1,h2,h3",
@@ -143,7 +164,7 @@ $(document).ready(function ()  {
       hashGenerator: function (text) {
         return text.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
       },
-      ignoreSelector: "h1.title, .toc-ignore",
+      ignoreSelector: ".toc-ignore",
       scrollTo: 0
     };
     options.showAndHide = true;
@@ -165,6 +186,7 @@ $(document).ready(function ()  {
   width: 100%;
 }
 }
+
 
 .toc-content {
   padding-left: 30px;
@@ -224,11 +246,20 @@ div.tocify {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
-<h1 class="title">XGR: eXploring Genomic Relations at the gene, SNP and genomic region level through enrichment, similarity, network and annotation analysis</h1>
+
+
+<h1 class="title toc-ignore">XGR: eXploring Genomic Relations at the gene, SNP and genomic region level through enrichment, similarity, network and annotation analysis</h1>
 <h4 class="author"><em><p><a href="http://www.well.ox.ac.uk/dr-hai-fang"><code>Hai Fang</code></a>, <a href="http://www.well.ox.ac.uk/bogdan-knezevic"><code>Bogdan Knezevic</code></a>, <a href="http://www.well.ox.ac.uk/katie-burnham"><code>Katie L Burnham</code></a>, <a href="http://www.well.ox.ac.uk/julian-knight"><code>Julian C Knight</code></a></p>
 <p>Wellcome Trust Centre for Human Genetics, University of Oxford, UK</p></em></h4>
-<h4 class="date"><em>Mon Aug 22 16:30:43 2016</em></h4>
+<h4 class="date"><em>Sun Oct 16 23:17:28 2016</em></h4>
 
 </div>
 
@@ -246,10 +277,9 @@ div.tocify {
 <h1><span class="header-section-number">3</span> Installation</h1>
 <div id="r" class="section level2">
 <h2><span class="header-section-number">3.1</span> R</h2>
-<p>R (<a href="http://www.r-project.org" class="uri">http://www.r-project.org</a>) is a language and environment for statistical computing and graphics. R version 3.1.0 (or higher) is required to be installed in your local machine. The latest version can be installed following instructions below for different platforms: <a href="http://cran.r-project.org/bin/windows/base">Windows</a>, <a href="http://cran.r-project.org/bin/macosx">Mac OS X 10.6 (Snow Leopard or higher)</a>, and <code>Linux</code> (see below).</p>
+<p>R (<a href="http://www.r-project.org" class="uri">http://www.r-project.org</a>) is a language and environment for statistical computing and graphics. The latest version on different platforms can be installed: <code>Windows</code> (<a href="http://cran.r-project.org/bin/windows/base">download</a>), <code>Mac OS X</code> (<a href="http://cran.r-project.org/bin/macosx">download</a>), and <code>Linux</code> (see below).</p>
 <ul>
-<li>Assume you have a <code>ROOT (sudo)</code> privilege:</li>
-</ul>
+<li><p>Assume you have a <code>ROOT (sudo)</code> privilege:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Below are shell command lines in Terminal</span>
 sudo su
 <span class="co"># here enter your password</span>
@@ -260,10 +290,8 @@ cd R<span class="fl">-3.2.5</span>
 make
 make check
 make install
-R <span class="co"># start R</span></code></pre></div>
-<ul>
-<li>Assume you do NOT have a ROOT privilege and want R installation under your home directory (<code>$HOME</code>):</li>
-</ul>
+R <span class="co"># start R</span></code></pre></div></li>
+<li><p>Assume you do <code>NOT</code> have a <code>ROOT (sudo)</code> privilege and want R installation under your home directory (<code>$HOME</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Below are shell command lines in Terminal</span>
 wget http:<span class="er">//</span>www.stats.bris.ac.uk/R/src/base/R<span class="dv">-3</span>/R<span class="fl">-3.2.5</span>.tar.gz
 tar xvfz R<span class="fl">-3.2.5</span>.tar.gz
@@ -272,27 +300,26 @@ cd R<span class="fl">-3.2.5</span>
 make
 make check
 make install
-$HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></code></pre></div>
+$HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></code></pre></div></li>
+</ul>
 </div>
 <div id="packages" class="section level2">
 <h2><span class="header-section-number">3.2</span> Packages</h2>
 <p>For installation of the <code>XGR</code> package, please follow the instructions below:</p>
 <ul>
-<li>Install the the <code>XGR</code> package and its dependencies:</li>
-</ul>
+<li><p>Install the the <code>XGR</code> package and its dependencies:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;http://bioconductor.org/biocLite.R&quot;</span>)
-<span class="kw">biocLite</span>(<span class="st">&quot;XGR&quot;</span>)</code></pre></div>
-<ul>
-<li>Highly recommend to also install the development version of <code>XGR</code> package (now hosted in <em>GitHub</em><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>):</li>
-</ul>
+<span class="kw">biocLite</span>(<span class="st">&quot;XGR&quot;</span>)</code></pre></div></li>
+<li><p>Highly recommend to also install the development version of <code>XGR</code> package (now hosted in <em>GitHub</em><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">if(!(<span class="st">&quot;devtools&quot;</span> %in%<span class="st"> </span><span class="kw">rownames</span>(<span class="kw">installed.packages</span>()))) <span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
 <span class="kw">library</span>(devtools)
-<span class="kw">install_github</span>(<span class="kw">c</span>(<span class="st">&quot;hfang-bristol/XGR&quot;</span>), <span class="dt">dependencies=</span>T)</code></pre></div>
+<span class="kw">install_github</span>(<span class="kw">c</span>(<span class="st">&quot;hfang-bristol/XGR&quot;</span>), <span class="dt">dependencies=</span>T)</code></pre></div></li>
+</ul>
 </div>
 </div>
 <div id="source-data" class="section level1">
 <h1><span class="header-section-number">4</span> Source data</h1>
-<p>All source data are represented uniformly as well-documented RData-formatted files, taking advantage of the R software environment and its packages such as igraph <span class="citation">(Csardi and Nepusz 2006)</span>. These data are subject to regular updates, and are also regularly supplemented to keep pace with the explosive nature of big data in modern genome biology.</p>
+<p>All source data are represented uniformly as well-documented RData-formatted files, taking advantage of the R software environment and its packages such as igraph <span class="citation">(Csardi and Nepusz 2006)</span> and GenomicRanges <span class="citation">(Lawrence et al. 2013)</span>. These data are subject to regular updates, and are also regularly supplemented to keep pace with the explosive nature of big data in modern genome biology.</p>
 <div id="ontologies-and-annotations-at-the-gene-level" class="section level2">
 <h2><span class="header-section-number">4.1</span> Ontologies and annotations at the gene level</h2>
 <table>
@@ -351,7 +378,7 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <td align="left">MP</td>
 </tr>
 <tr class="even">
-<td align="left">Druggable</td>
+<td align="left">Druggability</td>
 <td align="left">DGI druggable gene categories</td>
 <td align="left">DGIdb</td>
 </tr>
@@ -361,9 +388,9 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <td align="left">SF</td>
 </tr>
 <tr class="even">
-<td align="left">Evolution</td>
-<td align="left">phylostratific age information (our ancestors)</td>
-<td align="left">PS2</td>
+<td align="left">Domain</td>
+<td align="left">Pfam domain families</td>
+<td align="left">Pfam</td>
 </tr>
 <tr class="odd">
 <td align="left">MsigDB</td>
@@ -449,6 +476,16 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <td align="left">MsigDB</td>
 <td align="left">Immunologic signature gene sets</td>
 <td align="left">MsigdbC7</td>
+</tr>
+<tr class="even">
+<td align="left">eGenes</td>
+<td align="left">GTEx eGene tissues</td>
+<td align="left">GTExV4</td>
+</tr>
+<tr class="odd">
+<td align="left">Evolution</td>
+<td align="left">phylostratific age information (our ancestors)</td>
+<td align="left">PS2</td>
 </tr>
 </tbody>
 </table>
@@ -658,6 +695,144 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <td align="left">Sample-specific DHS</td>
 <td align="left">Blueprint_DNaseI</td>
 </tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E029 (Primary monocytes from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E029</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E030 (Primary neutrophils from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E030</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E031 (Primary B cells from cord blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E031</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E032 (Primary B cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E032</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E033 (Primary T cells from cord blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E033</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E034 (Primary T cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E034</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E035 (Primary hematopoietic stem cells)</td>
+<td align="left">EpigenomeAtlas_15Segments_E035</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E036 (Primary hematopoietic stem cells short term culture)</td>
+<td align="left">EpigenomeAtlas_15Segments_E036</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E037 (Primary T helper memory cells from peripheral blood 2)</td>
+<td align="left">EpigenomeAtlas_15Segments_E037</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E038 (Primary T helper naive cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E038</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E039 (Primary T helper naive cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E039</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E040 (Primary T helper memory cells from peripheral blood 1)</td>
+<td align="left">EpigenomeAtlas_15Segments_E040</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E041 (Primary T helper cells PMA-I stimulated)</td>
+<td align="left">EpigenomeAtlas_15Segments_E041</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E042 (Primary T helper 17 cells PMA-I stimulated)</td>
+<td align="left">EpigenomeAtlas_15Segments_E042</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E043 (Primary T helper cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E043</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E044 (Primary T regulatory cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E044</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E045 (Primary T cells effector/memory enriched from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E045</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E046 (Primary Natural Killer cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E046</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E047 (Primary T killer naive cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E047</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E048 (Primary T killer memory cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E048</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E050 (Primary hematopoietic stem cells G-CSF-mobilized Female)</td>
+<td align="left">EpigenomeAtlas_15Segments_E050</td>
+</tr>
+<tr class="even">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E051 (Primary hematopoietic stem cells G-CSF-mobilized Male)</td>
+<td align="left">EpigenomeAtlas_15Segments_E051</td>
+</tr>
+<tr class="odd">
+<td align="left">Genome Segmentations</td>
+<td align="left">Roadmap Epigenomics</td>
+<td align="left">E062 (Primary mononuclear cells from peripheral blood)</td>
+<td align="left">EpigenomeAtlas_15Segments_E062</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -829,7 +1004,7 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 </div>
 <div id="xenrichconciser" class="section level3">
 <h3><span class="header-section-number">5.1.6</span> xEnrichConciser</h3>
-<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichConciser.html"><code>xEnrichConciser</code></a></em>: makes enrichment results much clearer by removing redundant terms. A redundant term is claimed if its overlapped part with a more significant term meets both criteria: covers more than 95% of this redundant term but no more than 50% of the more significant term. In doing so, only non-redundant but informative terms will be left.</p>
+<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xEnrichConciser.html"><code>xEnrichConciser</code></a></em>: makes enrichment results much clearer by removing redundant terms. A redundant term is claimed if its overlapped part with a more significant term meets both criteria: covers more than 95% of this redundant term and also more than 50% of the more significant term. In doing so, only non-redundant but informative terms will be left.</p>
 </div>
 <div id="xenrichbarplot" class="section level3">
 <h3><span class="header-section-number">5.1.7</span> xEnrichBarplot</h3>
@@ -919,8 +1094,10 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xVisNet.html"><code>xVisNet</code></a></em>: visualises the graph in different layouts.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xVisKernels.html"><code>xVisKernels</code></a></em>: visualises distance kernel functions.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSNPscores.html"><code>xSNPscores</code></a></em>: calculates scores for lead or LD SNPs.</li>
+<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSNPlocations.html"><code>xSNPlocations</code></a></em>: extracts genomic locations for SNPs.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSNP2nGenes.html"><code>xSNP2nGenes</code></a></em>: defines nearby genes from SNPs.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSparseMatrix.html"><code>xSparseMatrix</code></a></em>: creates a sparse matrix for an input file.</li>
+<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSM2DF.html"><code>xSM2DF</code></a></em>: creates a data frame (with three columns) from a (sparse) matrix.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xLiftOver.html"><code>xLiftOver</code></a></em>: lifts genomic intervals from one genome build to another.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRsampling.html"><code>xGRsampling</code></a></em>: generates random samples for data genomic regions from background genomic regions.</li>
 </ul>
@@ -962,7 +1139,7 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <p>Adams, D, L Altucci, Se Antonarakis, J Ballesteros, S Beck, A Bird, C Bock, et al. 2012. “BLUEPRINT to decode the epigenetic signature written in blood.” <em>Nature Biotechnology</em> 30 (3). doi:<a href="https://doi.org/10.1038/nbt.2153">10.1038/nbt.2153</a>.</p>
 </div>
 <div id="ref-Ashburner2000">
-<p>Ashburner, M, C A Ball, J A Blake, D Botstein, H Butler, J M Cherry, A P Davis, et al. 2000. “Gene ontology: tool for the unification of biology. The Gene Ontology Consortium.” <em>Nat Genet</em> 25 (1): 25–29. doi:<a href="https://doi.org/10.1038/75556">10.1038/75556</a>.</p>
+<p>Ashburner, M, C A Ball, J A Blake, D Botstein, H Butler, J M Cherry, A P Davis, et al. 2000. “Gene ontology: tool for the unification of biology.” <em>Nat Genet</em> 25 (1): 25–29. doi:<a href="https://doi.org/10.1038/75556">10.1038/75556</a>.</p>
 </div>
 <div id="ref-Bernstein2012">
 <p>Bernstein, Bradley E, Ewan Birney, Ian Dunham, Eric D Green, Chris Gunter, and Michael Snyder. 2012. “An integrated encyclopedia of DNA elements in the human genome.” <em>Nature</em> 489 (7414): 57–74. doi:<a href="https://doi.org/10.1038/nature11247">10.1038/nature11247</a>.</p>
@@ -987,6 +1164,9 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 </div>
 <div id="ref-Kohler2013">
 <p>Köhler, Sebastian, Sandra C Doelken, Christopher J Mungall, Sebastian Bauer, Helen V Firth, Isabelle Bailleul-Forestier, Graeme C M Black, et al. 2013. “The Human Phenotype Ontology project: linking molecular biology and disease through phenotype data.” <em>Nucleic Acids Research</em> 42 (Database issue): D966–74. doi:<a href="https://doi.org/10.1093/nar/gkt1026">10.1093/nar/gkt1026</a>.</p>
+</div>
+<div id="ref-Lawrence2013">
+<p>Lawrence, Michael, Wolfgang Huber, Hervé Pagès, Patrick Aboyoun, Marc Carlson, Robert Gentleman, Martin T Morgan, and Vincent J Carey. 2013. “Software for Computing and Annotating Genomic Ranges.” <em>PLoS Computational Biology</em> 9 (8): 1–10. doi:<a href="https://doi.org/10.1371/journal.pcbi.1003118">10.1371/journal.pcbi.1003118</a>.</p>
 </div>
 <div id="ref-Pesquita2009">
 <p>Pesquita, C, D Faria, A O Falcao, P Lord, and F M Couto. 2009. “Semantic similarity in biomedical ontologies.” <em>PLoS Comput Biol</em> 5 (7): e1000443. doi:<a href="https://doi.org/10.1371/journal.pcbi.1000443">10.1371/journal.pcbi.1000443</a>.</p>
