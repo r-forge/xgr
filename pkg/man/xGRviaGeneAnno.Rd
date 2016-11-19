@@ -56,7 +56,7 @@ provided.}
 
 \item{build.conversion}{the conversion from one genome build to
 another. The conversions supported are "hg38.to.hg19" and
-"hg18.to.hg19". By default it is NA (no need to do so).}
+"hg18.to.hg19". By default it is NA (no need to do so)}
 
 \item{gap.max}{the maximum distance to nearby genes. Only those genes
 no far way from this distance will be considered as nearby genes. By
@@ -228,7 +228,7 @@ maximum of both p-values in these two calculations.}
 \dontrun{
 # Load the XGR package and specify the location of built-in data
 library(XGR)
-RData.location <- "http://galahad.well.ox.ac.uk/bigdata_dev/"
+RData.location <- "http://galahad.well.ox.ac.uk/bigdata_dev"
 
 # Enrichment analysis for GWAS SNPs from ImmunoBase
 ## a) provide input data
