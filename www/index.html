@@ -264,7 +264,7 @@ div.tocify {
 <h1 class="title toc-ignore">XGR: eXploring Genomic Relations at the gene, SNP and genomic region level through enrichment, similarity, network and annotation analysis</h1>
 <h4 class="author"><em><p><a href="http://www.well.ox.ac.uk/dr-hai-fang"><code>Hai Fang</code></a>, <a href="http://www.well.ox.ac.uk/bogdan-knezevic"><code>Bogdan Knezevic</code></a>, <a href="http://www.well.ox.ac.uk/katie-burnham"><code>Katie L Burnham</code></a>, <a href="http://www.well.ox.ac.uk/julian-knight"><code>Julian C Knight</code></a></p>
 <p>Wellcome Trust Centre for Human Genetics, University of Oxford, UK</p></em></h4>
-<h4 class="date"><em>Fri Nov 18 18:32:46 2016</em></h4>
+<h4 class="date"><em>Sat Nov 19 13:09:58 2016</em></h4>
 
 </div>
 
@@ -1058,7 +1058,12 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 </div>
 <div id="network-functions" class="section level2">
 <h2><span class="header-section-number">5.3</span> Network functions</h2>
-<p>Network functions are supposed to identify a gene subnetwork from a gene interaction network with node/gene significant information. The node/gene information can be either directly provided (eg user-defined genes with the significance level; p-values or FDR) or indirectly provided (eg nearby genes of user-defined SNPs with the significance level; GWAS reported p-values). From a gene interaction network with nodes labelled with gene information, the algorithm searching for a maximum-scoring gene subnetwork has been reported in our previous publication <span class="citation">(Fang and Gough 2014)</span>), briefed as follows: 1) <code>score transformation</code>, that is, given the threshold of tolerable p-value, nodes with p-values below this threshold (nodes of interest) are scored positively, and negative scores for nodes with threshold-above p-values (intolerable), 2) <code>subnetwork identification</code>, that is, to find an interconnected gene subnetwork enriched with positive-score nodes, but allowing for a few negative-score nodes as linkers, and 3) <code>controlling the subnetwork size</code>, that is, an iterative procedure is provided to finetune tolerable thresholds for identifying the gene subnetwork with a desired number of nodes.</p>
+<p>Network functions are supposed to identify a gene subnetwork from a gene interaction network with node/gene significant information. The node/gene information can be directly provided (eg user-defined genes with the significance level; p-values or FDR). The node/gene information can also be indirectly provided, for example, nearby genes of user-defined SNPs with the significance level (eg GWAS reported p-values), or more generally, nearby genes of user-defined genomic regions with the significance level (eg differential methylated regions together with FDR). From a gene interaction network with nodes labelled with gene information, the algorithm searching for a maximum-scoring gene subnetwork has been reported in our previous publication <span class="citation">(Fang and Gough 2014)</span>), briefed as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p><code>score transformation</code>, that is, given the threshold of tolerable p-value, nodes with p-values below this threshold (nodes of interest) are scored positively, and negative scores for nodes with threshold-above p-values (intolerable);</p></li>
+<li><p><code>subnetwork identification</code>, that is, to find an interconnected gene subnetwork enriched with positive-score nodes, but allowing for a few negative-score nodes as linkers;</p></li>
+<li><p><code>controlling the subnetwork size</code>, that is, an iterative procedure is provided to finetune tolerable thresholds for identifying the gene subnetwork with a desired number of nodes.</p></li>
+</ol>
 <div id="xsubnetergenes" class="section level3">
 <h3><span class="header-section-number">5.3.1</span> xSubneterGenes</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSubneterGenes.html"><code>xSubneterGenes</code></a></em>: takes as input a list of user-defined genes with the significance level (p-values), superposes these genes onto a gene interaction network, and outputs a maximum-scoring gene subnetwork that contains as many most significant (highly scored) genes as possible but also a few lesser significant (scored) genes as linkers.</p>
@@ -1071,6 +1076,14 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <h3><span class="header-section-number">5.3.3</span> xSubneterSNPs</h3>
 <p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSubneterSNPs.html"><code>xSubneterSNPs</code></a></em>: identifies a gene subnetwork that is likely modulated by input SNPs and/or their Linkage Disequilibrium (LD) SNPs, including two major steps. The first step is to use <code>xSNP2GeneScores</code> for defining and scoring nearby genes that are located within distance window of input and/or LD SNPs. The second step is to use <code>xSubneterGenes</code> for identifying a maximum-scoring gene subnetwork.</p>
 </div>
+<div id="xgr2genescores" class="section level3">
+<h3><span class="header-section-number">5.3.4</span> xGR2GeneScores</h3>
+<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGR2GeneScores.html"><code>xGR2GeneScores</code></a></em>: takes as input a list of user-defined genomic regions (GR) with the significance level (eg p-values), and defines and scores nearby genes that take into account the distance to and the significance of input GR.</p>
+</div>
+<div id="xsubnetergr" class="section level3">
+<h3><span class="header-section-number">5.3.5</span> xSubneterGR</h3>
+<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSubneterGR.html"><code>xSubneterGR</code></a></em>: identifies a gene subnetwork that is likely modulated by input genomic regions (GR), including two major steps. The first step is to use <code>xGR2GeneScores</code> for defining and scoring nearby genes that are located within distance window of input genomic regions. The second step is to use <code>xSubneterGenes</code> for identifying a maximum-scoring gene subnetwork.</p>
+</div>
 </div>
 <div id="annotation-functions" class="section level2">
 <h2><span class="header-section-number">5.4</span> Annotation functions</h2>
@@ -1081,7 +1094,14 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 </div>
 <div id="xgrviagenomicanno" class="section level3">
 <h3><span class="header-section-number">5.4.2</span> xGRviaGenomicAnno</h3>
-<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRviaGenomicAnno.html"><code>xGRviaGenomicAnno</code></a></em>: conducts region-based enrichment analysis using functional genomic annotations. Enrichment analysis is based on binomial test for estimating the significance of overlaps at three levels of resolution. Genomic annotations cover a broad spectrum of genetic and epigenetic knowledge, including functional genomic data experimentally generated by the consortia such as ENCODE <span class="citation">(Bernstein et al. 2012)</span>, FANTOM <span class="citation">(Forrest et al. 2014)</span>, BLUEPRINT <span class="citation">(Adams et al. 2012)</span> and TCGA <span class="citation">(Kandoth et al. 2013)</span>, and comparative genomic data predicted by the computational methods. The resolution can be one of <code>bases</code> at the base resolution (by default), <code>regions</code> at the region resolution, and <code>hybrid</code> at the base-region hybrid resolution (that is, data at the region resolution but annotation/background at the base resolution). Generally speaking, if genomic annotations are exclusive to each other, the resolution of overlaps being tested can be either <code>regions</code> or <code>hybrid</code>. If genomic annotations are somehow inclusive to each other, it is better to choose <code>hybrid</code> (or <code>bases</code>). If regions being analysed are SNPs, then the results are the same (irrespective of specified resolution).</p>
+<p><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRviaGenomicAnno.html"><code>xGRviaGenomicAnno</code></a></em>: conducts region-based enrichment analysis using functional genomic annotations. Enrichment analysis is based on binomial test for estimating the significance of overlaps at three levels of resolution. Genomic annotations cover a broad spectrum of genetic and epigenetic knowledge, including functional genomic data experimentally generated by the consortia such as ENCODE <span class="citation">(Bernstein et al. 2012)</span>, FANTOM <span class="citation">(Forrest et al. 2014)</span>, BLUEPRINT <span class="citation">(Adams et al. 2012)</span> and TCGA <span class="citation">(Kandoth et al. 2013)</span>, and comparative genomic data predicted by the computational methods.</p>
+<p>Notably, the resolution of overlaps being tested can be:</p>
+<ol style="list-style-type: decimal">
+<li><p><code>bases</code> at the base resolution (by default),</p></li>
+<li><p><code>regions</code> at the region resolution,</p></li>
+<li><p><code>hybrid</code> at the base-region hybrid resolution (that is, data at the region resolution but annotation/background at the base resolution).</p></li>
+</ol>
+<p>Generally speaking, if genomic annotations are exclusive to each other, the resolution can be either <code>regions</code> or <code>hybrid</code>. If genomic annotations are somehow inclusive to each other, it is better to choose <code>hybrid</code> (or <code>bases</code>). If regions being analysed are SNPs, then the results are the same (irrespective of specified resolution).</p>
 </div>
 <div id="xgrviagenomicannoadv" class="section level3">
 <h3><span class="header-section-number">5.4.3</span> xGRviaGenomicAnnoAdv</h3>
@@ -1106,6 +1126,8 @@ $HOME/R<span class="fl">-3.2.5</span>/bin/R <span class="co"># start R</span></c
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xLiftOver.html"><code>xLiftOver</code></a></em>: lifts genomic intervals from one genome build to another.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRsampling.html"><code>xGRsampling</code></a></em>: generates random samples for data genomic regions from background genomic regions.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xColormap.html"><code>xColormap</code></a></em>: defines a colormap (color palette).</li>
+<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGRscores.html"><code>xGRscores</code></a></em>: calculates scores for input genomic regions (GR).</li>
+<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGR2nGenes.html"><code>xGR2nGenes</code></a></em>: defines nearby genes from input genomic regions (GR).</li>
 </ul>
 </div>
 <div id="auxiliary-functions" class="section level2">
