@@ -200,23 +200,39 @@ xGR2xGenes <- function(data, format=c("chr:start-end","data.frame","bed","GRange
 			q2r$gr <- names(gr[q2r[,2]])
 			q2r$dgr <- names(dGR[q2r[,1]])
 			
+			#################################
+			## to reduce runtime significantly
+			ind <- match(df_SGS$GR, q2r$gr)
+			df_found <- df_SGS[!is.na(ind), ]
+			#################################
+			
+			system.time({
+			
+			## very slow
 			ls_dgr <- split(x=q2r$gr, f=q2r$dgr)
 			ls_df <- lapply(1:length(ls_dgr), function(i){
 							
 				#################
 				## very important
 				#################
+				if(0){
 				ind <- match(df_SGS$GR, ls_dgr[[i]])
 				df <- df_SGS[!is.na(ind), ]
+				}else{
+				ind <- match(df_found$GR, ls_dgr[[i]])
+				df <- df_found[!is.na(ind), ]
+				}
 				
 				#################################
-				## keep maximum weight if there are many overlaps
+				## keep maximum weight per gene if there are many overlaps
 				#################################
 				df <- as.data.frame(df %>% dplyr::group_by(Gene) %>% dplyr::summarize(Score=max(Weight)))
 				data.frame(GR=rep(names(ls_dgr)[i],nrow(df)), df, stringsAsFactors=F)
 			})
 			df_xGenes <- do.call(rbind, ls_df)
 	
+			})
+
 			########################################
 			# check gene (make sure official symbol)
 			ind <- !is.na(XGR::xSymbol2GeneID(df_xGenes$Gene, details=TRUE, verbose=FALSE, RData.location=RData.location)$Symbol)

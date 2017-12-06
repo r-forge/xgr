@@ -157,12 +157,15 @@ xEnrichForest <- function(eTerm, top_num=10, FDR.cutoff=0.05, colormap="ggplot2.
 	ngroup <- length(unique(df$group))
 	nonto <- length(unique(df$ontology))
 	if(ngroup!=1 | nonto!=1){
+		scales <- "free_y"
+		space <- "free_y"
+		
 		if(ngroup==1){
-			bp <- bp + facet_grid(ontology~., scales='free', space='free')
+			bp <- bp + facet_grid(ontology~., scales=scales, space=space)
 		}else if(nonto==1){
-			bp <- bp + facet_grid(.~group, scales='free', space='free')
+			bp <- bp + facet_grid(.~group, scales=scales, space=space)
 		}else{
-			bp <- bp + facet_grid(ontology~group, scales='free', space='free')
+			bp <- bp + facet_grid(ontology~group, scales=scales, space=space)
 		}
 		
 		## strip
