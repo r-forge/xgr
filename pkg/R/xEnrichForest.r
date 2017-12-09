@@ -97,6 +97,9 @@ xEnrichForest <- function(eTerm, top_num=10, FDR.cutoff=0.05, colormap="ggplot2.
 		}
 		
 		df <- subset(df, df$adjp<FDR.cutoff)
+		
+		
+		
 	}
 	
 	## text wrap
@@ -126,7 +129,8 @@ xEnrichForest <- function(eTerm, top_num=10, FDR.cutoff=0.05, colormap="ggplot2.
 	df$fdr[df$fdr>=zlim[2]] <- zlim[2]
 	
 	## order by 'or', 'adjp'
-	df <- df[with(df,order(group, ontology, or,fdr)),]
+	df$group <- factor(df$group, levels=unique(df$group))
+	df <- df[with(df,order(group, ontology, or, fdr)),]
 	df$name <- factor(df$name, levels=unique(df$name))
 	
 	###########################################

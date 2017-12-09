@@ -196,7 +196,7 @@ xGR2xGenes <- function(data, format=c("chr:start-end","data.frame","bed","GRange
 			
 			gr <- xGR(df_SGS$GR, format="chr:start-end", verbose=verbose, RData.location=RData.location)
 			
-			q2r <- as.data.frame(GenomicRanges::findOverlaps(query=dGR, subject=gr, maxgap=0, minoverlap=1L, type="any", select="all", ignore.strand=TRUE))
+			q2r <- as.data.frame(GenomicRanges::findOverlaps(query=dGR, subject=gr, maxgap=-1L, minoverlap=0L, type="any", select="all", ignore.strand=TRUE))
 			q2r$gr <- names(gr[q2r[,2]])
 			q2r$dgr <- names(dGR[q2r[,1]])
 			
