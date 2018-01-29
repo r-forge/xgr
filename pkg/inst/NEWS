@@ -1,0 +1,145 @@
+CHANGES IN VERSION 1.1.1
+-----------------------
+
+NEW FEATURES
+
+    o Modify functions ('xEnricher', 'xEnricherGenes', 'xEnricherSNPs', 'xEnricherYours', 'xGRviaGenomicAnno') enabling two-side p-value calculation and inclusion of odds ratio (confidence intervals)
+
+    o Add a new function 'xEnricherGenesAdv' for conducting enrichment analysis given a list of gene sets and a list of ontologies
+    
+    o Add a new function 'xGRviaGeneAnnoAdv' for conducting enrichment analysis given a list of genomic region sets and a list of ontologies
+    
+    o Add a new function 'xEnrichForest' for visualising enrichment results in a forest plot
+
+    o Add a new function 'xVisInterpAnimate' for animating irregular data interpolation and visualisation
+    
+    o Modify 'xDAGpropagate' allowing for keeping all children
+    
+    o Modify 'xSNP2nGenes' and 'xSNP2GeneScores' allowing for inclusion of a TAD dataset to pre-filter SNP-nGene pairs
+    
+    o Modify 'xEnrichBarplot', 'xEnrichCompare', 'xVisNet', 'xVisInterp', 'xVisInterpAnimate' and 'xVisEvidence' allowing for inclusion of font family
+    
+    o Populate the primary source KEGG into 'xEnricherGenes', 'xGRviaGeneAnno', 'xDefineNet', 'xSubneterGenes', 'xSubneterSNPs' and 'xSubneterGR'
+    
+    o Add a new function 'xCombineNet' for combining networks
+
+    o Modify 'xGR2nGenes' allowing for user-defined 'GR.Gene' (a GR object)
+    
+    o Modify 'xEnrichDAGplot' only visualising nodes within a user-defined graph (an igraph object)
+    
+    o Populate annotations (KEGG and REACTOME)
+
+    o Add a new function 'xGraphML' for creating a graphml file
+
+    o Add a new function 'xVolcano' for drawing a volcano plot
+
+	
+CHANGES IN VERSION 1.0.10
+-----------------------
+
+NEW FEATURES
+
+    o Add a new function 'xVisInterp' for irregular data interpolation and visualisation
+    
+    o Populate annotations
+
+    o Modify 'xSymbol2GeneID' allowing for converting into gene info
+        
+    o Define S3 classes ('eTerm')
+
+    o Add a new function 'xDefineNet' for defining built-in network
+    
+    
+CHANGES IN VERSION 1.0.9
+-----------------------
+
+NEW FEATURES
+
+    o Add a new function 'xSymbol2GeneID' for converting gene symbols to entrez geneid
+    
+    o Add a new function 'xDAGpropagate' for propagating annotations
+    
+    
+CHANGES IN VERSION 1.0.8
+-----------------------
+
+NEW FEATURES
+
+    o Add a new function 'xCheckParallel' for checking and using parallel computing on Unix-like systems and on Windows
+    
+    o Enable parallel computing on Windows ('xDAGsim', 'xSocialiser' and 'xGRviaGenomicAnnoAdv')
+    
+    o Populate annotations
+    
+
+CHANGES IN VERSION 1.0.6
+-----------------------
+
+NEW FEATURES
+
+    o Fix bugs (such as in 'xGRviaGeneAnno', 'xGRviaGenomicAnno' and 'xGRviaGenomicAnnoAdv')
+    
+    o Get published in Genome Medicine (see http://dx.doi.org/10.1186/s13073-016-0384-y)
+    
+
+CHANGES IN VERSION 1.0.5
+-----------------------
+
+NEW FEATURES
+
+    o Change functions ('xEnrichBarplot' and 'xEnrichCompare') caused by the major ggplot2 update (2.2.0)
+    
+    o Add a new function 'xColormap' for defining color palette (including those used by ggplot2)
+
+    o Add new functions ('xSubneterGR', 'xGR2GeneScores', 'xGR2nGenes' and 'xGRscores') to conduct region-based network analysis
+    
+    o Populate annotations
+    
+
+CHANGES IN VERSION 1.0.4
+-----------------------
+
+NEW FEATURES
+
+    o Add infrastructure functions ('xSNPlocations' and 'xSM2DF')
+
+    o Populate annotations
+
+
+CHANGES IN VERSION 1.0.3
+-----------------------
+
+NEW FEATURES
+
+    o Fix bugs in the function 'xRDataLoader' for Windows users
+    
+    o Enable choosing analysis resolution done by 'xGRviaGenomicAnno'
+    
+    
+CHANGES IN VERSION 1.0.2
+-----------------------
+
+NEW FEATURES
+
+    o Add new functions ('xEnrichConciser', 'xEnrichBarplot', 'xEnrichDAGplot', 'xEnrichCompare' and 'xEnrichDAGplotAdv') to visualise and compare enrichment analysis results
+    
+    o Add new functions ('xSocialiserDAGplot' and 'xSocialiserDAGplotAdv') to visualise and compare similarity analysis results
+    
+    o Add new functions ('xVisKernels', 'xSNPscores', 'xSNP2nGenes', 'xSparseMatrix' and 'xSNP2GeneScores') to control how to define and score seed genes from a list of GWAS SNPs
+    
+    o Add new annotation functions ('xGRviaGeneAnno', 'xGRviaGenomicAnno' and 'xGRviaGenomicAnnoAdv') to interpret user-defined list of genomic regions either via looking at nearby gene annotations by ontologies or via looking at co-localised functional genomic annotations
+
+
+CHANGES IN VERSION 1.0.0
+-----------------------
+
+NEW FEATURES
+
+    o A new data interpretation system by comprehensively utilising ontology and network information to make a user-defined gene or SNP list more interpretable
+
+    o Enrichment analysis using either built-in or custom ontologies
+
+    o Similarity analysis for calculating semantic similarity between genes (or SNPs) based on their ontology annotation profiles
+    
+    o Network analysis for identifying gene networks given a query list of (significant) genes or SNPs
+    
