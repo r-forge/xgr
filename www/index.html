@@ -261,7 +261,7 @@ $(document).ready(function () {
 <h4 class="author"><em><div style="white-space: pre-line;"><code>Hai Fang</code>, <code>Bogdan Knezevic</code>, <code>Katie L Burnham</code>, <code>Julian C Knight</code>
 
 Wellcome Centre for Human Genetics, University of Oxford, UK</div></em></h4>
-<h4 class="date"><em>Mon Dec 24 19:59:08 2018</em></h4>
+<h4 class="date"><em>Fri Mar 29 14:08:20 2019</em></h4>
 
 </div>
 
@@ -383,13 +383,24 @@ make install
 <ul>
 <li><p>Install <code>XGR</code> (the latest stable release from CRAN):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span>(<span class="st">&quot;BiocManager&quot;</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(<span class="kw">installed.packages</span>()))) <span class="kw">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)
-BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;XGR&quot;</span>)</code></pre></div></li>
-<li><p>Also install the latest development version from <em>GitHub</em><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> (highly recommended):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;devtools&quot;</span>)
-BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="kw">c</span>(<span class="st">&quot;hfang-bristol/XGR&quot;</span>))
+BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;XGR&quot;</span>)
 ## reload the installed package
-devtools<span class="op">::</span><span class="kw">reload</span>(devtools<span class="op">::</span><span class="kw">inst</span>(<span class="st">&quot;XGR&quot;</span>))</code></pre></div></li>
+<span class="kw">detach</span>(package<span class="op">:</span>XGR, <span class="dt">unload=</span>T)
+<span class="kw">library</span>(XGR)</code></pre></div></li>
 </ul>
+<!--
+* Also install the latest development version from *GitHub* [^2] (highly recommended):
+
+    
+    ```r
+    BiocManager::install("remotes")
+    BiocManager::install(c("hfang-bristol/XGR"))
+    ## reload the installed package
+    detach(package:XGR, unload=T)
+    library(XGR)
+    ```
+[^2]: <https://github.com/hfang-bristol/XGR>
+-->
 </div>
 <div id="bugreports" class="section level2">
 <h2><span class="header-section-number">4.3</span> BugReports</h2>
@@ -1038,16 +1049,9 @@ devtools<span class="op">::</span><span class="kw">reload</span>(devtools<span c
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xCheckParallel.html"><code>xCheckParallel</code></a></em>: checks whether parallel computing should be used and how.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSymbol2GeneID.html"><code>xSymbol2GeneID</code></a></em>: converts gene symbols to entrez geneid.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGeneID2Symbol.html"><code>xGeneID2Symbol</code></a></em>: converts gene symbols to entrez geneid.</li>
-<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xVisInterp.html"><code>xVisInterp</code></a></em>: visualises irregular data after bilinear or bicubic spline interpolation onto a grid.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xDefineNet.html"><code>xDefineNet</code></a></em>: defines a gene network sourced from the STRING database or the Pathway Commons database.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xSimplifyNet.html"><code>xSimplifyNet</code></a></em>: simplifies a network by keeping root-tip shortest paths only.</li>
-<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xVolcano.html"><code>xVolcano</code></a></em>: draws a volcano plot.</li>
 <li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xHeatmap.html"><code>xHeatmap</code></a></em>: draws a heatmap.</li>
-<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xCorrelation.html"><code>xCorrelation</code></a></em>: calculates correlation and/or draws scatter plots.</li>
-<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xPolarDot.html"><code>xPolarDot</code></a></em>: draws a polar dotplot.</li>
-<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xPolarBar.html"><code>xPolarBar</code></a></em>: draws a polar barplot.</li>
-<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGScore.html"><code>xGScore</code></a></em>: extracts scores (constraint/conservation) for genomic regions.</li>
-<li><em><a href="http://rawgit.com/hfang-bristol/XGR/master/inst/xGScoreAdv.html"><code>xGScoreAdv</code></a></em>: calculates per base scores (constraint/conservation) for genomic regions overlapped with genomic annotations (eg genomic segments)</li>
 </ul>
 </div>
 <div id="auxiliary-functions" class="section level2">
@@ -1138,7 +1142,6 @@ devtools<span class="op">::</span><span class="kw">reload</span>(devtools<span c
 <hr />
 <ol>
 <li id="fn1"><p><a href="http://galahad.well.ox.ac.uk/XGR" class="uri">http://galahad.well.ox.ac.uk/XGR</a><a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p><a href="https://github.com/hfang-bristol/XGR" class="uri">https://github.com/hfang-bristol/XGR</a><a href="#fnref2">↩</a></p></li>
 </ol>
 </div>
 
