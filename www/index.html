@@ -518,7 +518,7 @@ $(document).ready(function () {
 <h4 class="author"><div class="line-block"><code>Hai Fang</code>, <code>Bogdan Knezevic</code>, <code>Katie L Burnham</code>, <code>Julian C Knight</code><br />
 <br />
 Wellcome Centre for Human Genetics, University of Oxford, UK</div></h4>
-<h4 class="date">Tue Jun 18 09:41:59 2019</h4>
+<h4 class="date">Thu Sep 5 16:04:16 2019</h4>
 
 </div>
 
@@ -610,9 +610,9 @@ Wellcome Centre for Human Genetics, University of Oxford, UK</div></h4>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># Below are shell command lines in Terminal</span></a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">sudo su</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># here enter your password</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">wget http<span class="op">:</span><span class="er">//</span>www.stats.bris.ac.uk<span class="op">/</span>R<span class="op">/</span>src<span class="op">/</span>base<span class="op">/</span>R<span class="dv">-3</span><span class="op">/</span>R<span class="dv">-3</span>.<span class="dv">5</span>.<span class="fl">1.</span>tar.gz</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">tar xvfz R<span class="dv">-3</span>.<span class="dv">5</span>.<span class="fl">1.</span>tar.gz</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">cd R<span class="dv">-3</span>.<span class="fl">5.1</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">wget http<span class="op">:</span><span class="er">//</span>www.stats.bris.ac.uk<span class="op">/</span>R<span class="op">/</span>src<span class="op">/</span>base<span class="op">/</span>R<span class="dv">-3</span><span class="op">/</span>R<span class="dv">-3</span>.<span class="dv">6</span>.<span class="fl">1.</span>tar.gz</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">tar xvfz R<span class="dv">-3</span>.<span class="dv">6</span>.<span class="fl">1.</span>tar.gz</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">cd R<span class="dv">-3</span>.<span class="fl">6.1</span></a>
 <a class="sourceLine" id="cb1-7" data-line-number="7">.<span class="op">/</span>configure</a>
 <a class="sourceLine" id="cb1-8" data-line-number="8">make</a>
 <a class="sourceLine" id="cb1-9" data-line-number="9">make check</a>
@@ -620,14 +620,14 @@ Wellcome Centre for Human Genetics, University of Oxford, UK</div></h4>
 <a class="sourceLine" id="cb1-11" data-line-number="11">R <span class="co"># start R</span></a></code></pre></div></li>
 <li><p>Assume you do <code>NOT</code> have a <code>ROOT (sudo)</code> privilege and want R installation under your home directory (<code>$HOME</code>):</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Below are shell command lines in Terminal</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">wget http<span class="op">:</span><span class="er">//</span>www.stats.bris.ac.uk<span class="op">/</span>R<span class="op">/</span>src<span class="op">/</span>base<span class="op">/</span>R<span class="dv">-3</span><span class="op">/</span>R<span class="dv">-3</span>.<span class="dv">5</span>.<span class="fl">1.</span>tar.gz</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">tar xvfz R<span class="dv">-3</span>.<span class="dv">5</span>.<span class="fl">1.</span>tar.gz</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">cd R<span class="dv">-3</span>.<span class="fl">5.1</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">.<span class="op">/</span>configure <span class="op">--</span>prefix=<span class="er">$</span>HOME<span class="op">/</span>R<span class="dv">-3</span>.<span class="fl">5.1</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">wget http<span class="op">:</span><span class="er">//</span>www.stats.bris.ac.uk<span class="op">/</span>R<span class="op">/</span>src<span class="op">/</span>base<span class="op">/</span>R<span class="dv">-3</span><span class="op">/</span>R<span class="dv">-3</span>.<span class="dv">6</span>.<span class="fl">1.</span>tar.gz</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">tar xvfz R<span class="dv">-3</span>.<span class="dv">6</span>.<span class="fl">1.</span>tar.gz</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">cd R<span class="dv">-3</span>.<span class="fl">6.1</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">.<span class="op">/</span>configure <span class="op">--</span>prefix=<span class="er">$</span>HOME<span class="op">/</span>R<span class="dv">-3</span>.<span class="fl">6.1</span></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6">make</a>
 <a class="sourceLine" id="cb2-7" data-line-number="7">make check</a>
 <a class="sourceLine" id="cb2-8" data-line-number="8">make install</a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="op">$</span>HOME<span class="op">/</span>R<span class="dv">-3</span>.<span class="fl">5.1</span><span class="op">/</span>bin<span class="op">/</span>R <span class="co"># start R</span></a></code></pre></div></li>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="op">$</span>HOME<span class="op">/</span>R<span class="dv">-3</span>.<span class="fl">6.1</span><span class="op">/</span>bin<span class="op">/</span>R <span class="co"># start R</span></a></code></pre></div></li>
 </ul>
 </div>
 <div id="packages" class="section level2">
@@ -638,7 +638,7 @@ Wellcome Centre for Human Genetics, University of Oxford, UK</div></h4>
 -->
 <p>For installation of the <code>XGR</code> package, please follow the instructions below:</p>
 <ul>
-<li><p>Install <code>XGR</code> (the latest stable release from CRAN):</p>
+<li><p>Install <code>XGR</code> (the latest stable release version deposited into CRAN from Bioconductor):</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="cf">if</span>(<span class="op">!</span>(<span class="st">&quot;BiocManager&quot;</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(<span class="kw">installed.packages</span>()))) <span class="kw">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">&quot;XGR&quot;</span>, <span class="dt">dependencies=</span>T)</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">## reload the installed package</span></a>
