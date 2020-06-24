@@ -12,7 +12,7 @@ label.wrap.lineheight = 0.8,
 node.label.size = NULL,
 node.label.fontface = "plain",
 node.label.color = "darkblue",
-node.label.alpha = 0.8,
+node.label.alpha = 0.9,
 node.label.padding = 1,
 node.label.arrow = 0.01,
 node.label.force = 1,
@@ -167,11 +167,8 @@ ggnetwork.
 none
 }
 \examples{
+RData.location <- "http://galahad.well.ox.ac.uk/bigdata"
 \dontrun{
-# Load the library
-library(XGR)
-RData.location <- "http://galahad.well.ox.ac.uk/bigdata/"
-
 ###########################
 # load REACTOME
 # restricted to Immune System ('R-HSA-168256') or Signal Transduction ('R-HSA-162582')

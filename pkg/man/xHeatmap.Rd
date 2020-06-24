@@ -14,7 +14,7 @@ barwidth = 0.3,
 barheight = NULL,
 nbin = 64,
 legend.title = "",
-x.rotate = 90,
+x.rotate = 45,
 x.text.size = 6,
 x.text.hjust = 0,
 y.text.size = 6,
@@ -115,9 +115,8 @@ a ggplot2 object
 none
 }
 \examples{
+RData.location <- "http://galahad.well.ox.ac.uk/bigdata"
 \dontrun{
-# Load the XGR package and specify the location of built-in data
-library(XGR)
 data(mtcars)
 gp <- xHeatmap(mtcars, reorder="none", colormap='jet.top', x.rotate=45,
 shape=19, size=3, x.text.size=8,y.text.size=8, legend.title='mtcars')

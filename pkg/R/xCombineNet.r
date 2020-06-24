@@ -14,11 +14,6 @@
 #' @seealso \code{\link{xDefineNet}}
 #' @include xCombineNet.r
 #' @examples
-#' \dontrun{
-#' # Load the library
-#' library(XGR)
-#' }
-#'
 #' RData.location <- "http://galahad.well.ox.ac.uk/bigdata"
 #' \dontrun{
 #' g1 <- xDefineNet(network="KEGG_environmental", RData.location=RData.location)
@@ -32,9 +27,9 @@ xCombineNet <- function(list_ig, combineBy=c('union','intersect'), attrBy=c("int
     combineBy <- match.arg(combineBy)
     attrBy <- match.arg(attrBy) 
     
-   	if(any(class(list_ig) %in% c("igraph"))){
+   	if(is(list_ig,"igraph")){
 		ls_ig <- list(list_ig)
-	}else if(class(list_ig)=="list"){
+	}else if(is(list_ig,"list")){
 		## Remove null elements in a list
 		ls_ig <- base::Filter(base::Negate(is.null), list_ig)
 		if(length(ls_ig)==0){
